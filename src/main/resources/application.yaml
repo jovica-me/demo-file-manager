@@ -1,0 +1,19 @@
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: keystore.p12
+    key-store-password: changeit
+    key-alias: demo
+http:
+  port: 8080
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/ris_project?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
+    username: risibol
+    password: BolU12.3
