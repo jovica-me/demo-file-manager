@@ -11,8 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod
 class AuthController {
 
 
-    @GetMapping("login")
-    fun loadForm(model: Model): String {
+
+    @GetMapping("/login")
+    fun login(model: Model): String {
         return "login"
+    }
+
+    @GetMapping("/register")
+    fun register(model: Model):String {
+        return "register"
     }
 }

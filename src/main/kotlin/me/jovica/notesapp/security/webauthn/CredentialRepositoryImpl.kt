@@ -7,51 +7,81 @@ import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import com.yubico.webauthn.data.PublicKeyCredentialType
 import com.yubico.webauthn.data.exception.Base64UrlException
 import me.jovica.notesapp.security.user.UserService
+import org.springframework.stereotype.Repository
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.stream.Collectors
+import kotlin.jvm.optionals.toCollection
 
+@Repository
 class CredentialRepositoryImpl(val userService: UserService) : CredentialRepository {
     override fun getCredentialIdsForUsername(username: String?): MutableSet<PublicKeyCredentialDescriptor> {
-        val user = userService.findUserByEmail(username) ?: return mutableSetOf()
-        return user.credentials.stream()
-            .map { toPublicKeyCredentialDescriptor(it) }
-            .collect(Collectors.toSet())
+        return userService
+            .findUserByUsername(username!!)
+            .map { user ->
+                user.credentials.stream()
+                    .map { toPublicKeyCredentialDescriptor(it) }
+                    .collect(Collectors.toSet())
+            }.orElse(mutableSetOf())
     }
 
     override fun getUserHandleForUsername(username: String?): Optional<ByteArray> {
-        val user = userService.findUserByEmail(username) ?: return Optional.empty()
-        return Optional.of(UUIDtoByteArray(user.id));
+        return userService.findUserByUsername(username!!).map { user -> user.id?.let { uuidtoByteArray(it) } }
     }
 
     override fun getUsernameForUserHandle(userHandler: ByteArray): Optional<String> {
         if (userHandler.isEmpty) {
             return Optional.empty()
         }
-        val user = userService.findUserById(ByteArrayToUUID(userHandler)) ?: return Optional.empty()
-        return Optional.of(user.username)
+        return userService
+            .findUserById(ByteArrayToUUID(userHandler))
+            .map { userAccount -> userAccount.username }
+
     }
 
-    override fun lookup(credentialId: ByteArray, userHandler: ByteArray): Optional<RegisteredCredential>? {
-        return userService.findUserById(ByteArrayToUUID(userHandler))?.credentials?.stream()
-            ?.filter {
-                credentialId == ByteArray.fromBase64Url(it.id)
-            }?.findFirst()?.map {
-                toRegisteredCredential(it)
+    override fun lookup(credentialId: ByteArray, userHandle: ByteArray): Optional<RegisteredCredential>? {
+
+
+        return userService
+            .findUserById(ByteArrayToUUID(userHandle))
+            .map { user -> user.credentials }
+            .orElse(mutableSetOf())
+            .stream()
+            .filter { cred ->
+                try {
+                    return@filter credentialId == cred.id?.let { ByteArray.fromBase64Url(it) }
+                } catch (e: Base64UrlException) {
+                    throw RuntimeException(e)
+                }
             }
+            .findFirst()
+            .map { toRegisteredCredential(it) }
+
+
     }
 
     override fun lookupAll(credentialId: ByteArray): MutableSet<RegisteredCredential> {
-        val x = userService.findCredentialById(credentialId.base64Url)?.let { toRegisteredCredential(it) }?.let{ mutableSetOf(it) }
-        if (x == null) {
-            return mutableSetOf()
+        return userService.findCredentialById(credentialId.base64Url).map { toRegisteredCredential(it) }.toCollection(
+            mutableSetOf()
+        )
+
+    }
+
+    private fun toRegisteredCredential(fidoCredential: WebAuthnCredentialEntity): RegisteredCredential {
+        try {
+            return RegisteredCredential.builder()
+                .credentialId(fidoCredential.id?.let { ByteArray.fromBase64Url(it) })
+                .userHandle(fidoCredential.userId?.let { uuidtoByteArray(it) })
+                .publicKeyCose(fidoCredential.publicKey?.let { ByteArray.fromBase64Url(it) })
+                .build()
+        } catch (e: Base64UrlException) {
+            throw java.lang.RuntimeException(e)
         }
-        return x;
     }
 
 }
 
-fun UUIDtoByteArray(uuid: UUID): ByteArray {
+fun uuidtoByteArray(uuid: UUID): ByteArray {
     val buffer = ByteBuffer.wrap(ByteArray(16))
     buffer.putLong(uuid.mostSignificantBits)
     buffer.putLong(uuid.leastSignificantBits)
@@ -69,7 +99,7 @@ fun toRegisteredCredential(fidoCredential: WebAuthnCredential): RegisteredCreden
     try {
         return RegisteredCredential.builder()
             .credentialId(ByteArray.fromBase64Url(fidoCredential.id))
-            .userHandle(UUIDtoByteArray(fidoCredential.userId))
+            .userHandle(uuidtoByteArray(fidoCredential.userId))
             .publicKeyCose(ByteArray.fromBase64Url(fidoCredential.publicKey))
             .build()
     } catch (e: Base64UrlException) {
@@ -78,13 +108,13 @@ fun toRegisteredCredential(fidoCredential: WebAuthnCredential): RegisteredCreden
 }
 
 fun toPublicKeyCredentialDescriptor(
-    cred: WebAuthnCredential
+    cred: WebAuthnCredentialEntity
 ): PublicKeyCredentialDescriptor {
     val descriptor: PublicKeyCredentialDescriptor? = null
     try {
         return PublicKeyCredentialDescriptor.builder()
-            .id(ByteArray.fromBase64Url(cred.id))
-            .type(PublicKeyCredentialType.valueOf(cred.type))
+            .id(cred.id?.let { ByteArray.fromBase64Url(it) })
+            .type(PublicKeyCredentialType.valueOf(cred.type!!))
             .build()
     } catch (e: Base64UrlException) {
         throw java.lang.RuntimeException(e)

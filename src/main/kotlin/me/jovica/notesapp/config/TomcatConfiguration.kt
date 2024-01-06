@@ -13,7 +13,7 @@ class TomcatConfiguration {
     private val httpPort = 0
 
     @Value("\${server.port}")
-    private val serverPort = 0
+    private val serverPort = 8443
 
     private fun createStandardConnector(): Connector {
         val connector = Connector("org.apache.coyote.http11.Http11NioProtocol")

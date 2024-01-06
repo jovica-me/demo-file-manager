@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class RelyingPartyConfiguration {
+class RelyingPartyConfiguration(val credentialRepository: CredentialRepository) {
 
     @Value("\${myapp.domain}")
     private val domainName = "localhost"
@@ -17,7 +17,7 @@ class RelyingPartyConfiguration {
     private val appName = "RIS Notes app"
 
     @Bean
-    fun relyingParty(credentialRepository: CredentialRepository?): RelyingParty {
+    fun relyingParty(): RelyingParty {
         val rpIdentity: RelyingPartyIdentity =
                 RelyingPartyIdentity.builder()
                         .id(domainName)
