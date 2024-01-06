@@ -17,18 +17,14 @@ class UserService(private val userAccountRepository: UserAccountRepository) {
         if (username.isNullOrBlank())
             throw IllegalArgumentException(" username is null or blank")
 
-        val userAccountEntity = userAccountRepository.findByUsername(username)
-
-        if (userAccountEntity.isPresent) {
-            throw IllegalArgumentException("user with username existed")
+        val userAccountEntity = userAccountRepository.findByUsername(username).orElseGet{
+            val result = UserAccountEntity()
+            result.username = username
+            result.fullName = fullName
+            userAccountRepository.save(result)
         }
+        return userAccountEntity
 
-        val result = UserAccountEntity()
-        result.username = username
-        result.fullName = fullName
-        userAccountRepository.save(result)
-
-        return result
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

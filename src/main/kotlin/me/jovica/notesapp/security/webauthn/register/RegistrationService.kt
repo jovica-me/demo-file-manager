@@ -4,7 +4,6 @@ import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.*
-import me.jovica.notesapp.security.user.UserAccount
 import me.jovica.notesapp.security.user.UserAccountEntity
 import me.jovica.notesapp.security.user.UserAccountRepository
 import me.jovica.notesapp.security.user.UserService
@@ -19,15 +18,8 @@ class RegistrationService(
     val userAccountRepository: UserAccountRepository
 ) {
     fun start(request: RegistrationStartRequest): PublicKeyCredentialCreationOptions {
-        val user = userService.createUser(request.username,request.fullName)
+        val user = userService.createUser(request.username, request.fullName)
 
-        return createPublicKeyCredentialCreationOptions(user)
-    }
-
-
-    private fun createPublicKeyCredentialCreationOptions(
-        user: UserAccountEntity
-    ): PublicKeyCredentialCreationOptions {
         val userIdentity =
             UserIdentity.builder()
                 .name(user.username)
@@ -52,20 +44,24 @@ class RegistrationService(
 
         return options
     }
-    fun finish(options: PublicKeyCredentialCreationOptions, finishResponse: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> ): Boolean {
+
+    fun finish(
+        options: PublicKeyCredentialCreationOptions,
+        finishResponse: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>
+    ): Boolean {
 
         val options = FinishRegistrationOptions.builder().request(options).response(finishResponse).build()
         val registrationResult = relyingParty.finishRegistration(options)
 
+        val user = userAccountRepository.findById(ByteArrayToUUID(options.request.user.id))
+            .orElseThrow { RuntimeException("Eroor") }
 
-        val user = userAccountRepository.findById(ByteArrayToUUID( options.request.user.id)).orElseThrow { RuntimeException("Eroor") }
-
-        userService.addCredential(registrationResult,user)
+        userService.addCredential(registrationResult, user)
         return true
     }
 }
 
-data class RegistrationStartRequest (
+data class RegistrationStartRequest(
     var fullName: String? = null,
     var username: String? = null
 )

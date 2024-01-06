@@ -18,7 +18,9 @@ class SecurityConfig {
                 authorize("/", permitAll)
                 authorize("/login", permitAll)
                 authorize("/register", permitAll)
-                authorize("/api/webauthn/**", permitAll)
+                authorize("/api/webauthn/login", permitAll)
+                authorize("/api/webauthn/register/start", permitAll)
+                authorize("/api/webauthn/register/finish", permitAll)
                 authorize(PathRequest.toStaticResources().atCommonLocations(), permitAll)
                 authorize(anyRequest, authenticated)
             }

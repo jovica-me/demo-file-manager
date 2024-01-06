@@ -9,17 +9,19 @@ import me.jovica.notesapp.security.webauthn.register.RegistrationService
 import me.jovica.notesapp.security.webauthn.register.RegistrationStartRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-@Controller
-@RequestMapping("/api/webauthn/")
+@RestController
+@RequestMapping("/api/webauthn/register")
 class ApiWebAuthnController(var registrationService: RegistrationService) {
     var START_REG_REQUEST = "login_options"
 
 
-    @PutMapping("register")
+    @PostMapping("/start")
     fun loginStart(
         @RequestBody request: RegistrationStartRequest,
         session: HttpSession
@@ -30,7 +32,7 @@ class ApiWebAuthnController(var registrationService: RegistrationService) {
         return response
     }
 
-    @GetMapping("register")
+    @PostMapping("/finish")
     fun loginFinish(
         @RequestBody request: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>,
         session: HttpSession
