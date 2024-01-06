@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security
+package me.jovica.notesapp.security.webauthn
 
 import com.yubico.webauthn.CredentialRepository
 import com.yubico.webauthn.RelyingParty

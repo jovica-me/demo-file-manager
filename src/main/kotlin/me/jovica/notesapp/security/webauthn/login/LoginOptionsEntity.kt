@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.login
+package me.jovica.notesapp.security.webauthn.login
 
 import jakarta.persistence.*
 import java.util.*

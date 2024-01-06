@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.user
+package me.jovica.notesapp.security.webauthn
 
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy

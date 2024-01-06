@@ -1,5 +1,7 @@
 package me.jovica.notesapp.security.user
 
+import me.jovica.notesapp.security.webauthn.WebAuthnCredential
+import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -33,6 +35,7 @@ class UserService(private val userAccountRepository: UserAccountRepository) {
             .orElseThrow({ RuntimeException("Can not add webAuthnCredential to a user who does not exist") })
 
         userAccount.credentials.add(webAuthnCredentialEntity);
+
     }
 
     fun findCredentialById(credentialId: String?): WebAuthnCredential? {

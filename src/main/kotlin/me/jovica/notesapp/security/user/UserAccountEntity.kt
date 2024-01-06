@@ -1,6 +1,7 @@
 package me.jovica.notesapp.security.user
 
 import jakarta.persistence.*
+import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
 import java.util.*
 
 @Entity
@@ -16,8 +17,8 @@ open class UserAccountEntity {
     open var fullName: String? = null
 
 
-    @Column(name = "email")
-    open var email: String? = null
+    @Column(name = "username")
+    open var username: String? = null
 
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "user_id")

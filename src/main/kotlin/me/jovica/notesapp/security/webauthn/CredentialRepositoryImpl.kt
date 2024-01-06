@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.user
+package me.jovica.notesapp.security.webauthn
 
 import com.yubico.webauthn.CredentialRepository
 import com.yubico.webauthn.RegisteredCredential
@@ -6,33 +6,34 @@ import com.yubico.webauthn.data.ByteArray
 import com.yubico.webauthn.data.PublicKeyCredentialDescriptor
 import com.yubico.webauthn.data.PublicKeyCredentialType
 import com.yubico.webauthn.data.exception.Base64UrlException
+import me.jovica.notesapp.security.user.UserService
 import java.nio.ByteBuffer
 import java.util.*
 import java.util.stream.Collectors
 
 class CredentialRepositoryImpl(val userService: UserService) : CredentialRepository {
-    override fun getCredentialIdsForUsername(p0: String?): MutableSet<PublicKeyCredentialDescriptor> {
-        val user = userService.findUserByEmail(p0) ?: return mutableSetOf()
+    override fun getCredentialIdsForUsername(username: String?): MutableSet<PublicKeyCredentialDescriptor> {
+        val user = userService.findUserByEmail(username) ?: return mutableSetOf()
         return user.credentials.stream()
             .map { toPublicKeyCredentialDescriptor(it) }
             .collect(Collectors.toSet())
     }
 
-    override fun getUserHandleForUsername(p0: String?): Optional<ByteArray> {
-        val user = userService.findUserByEmail(p0) ?: return Optional.empty()
+    override fun getUserHandleForUsername(username: String?): Optional<ByteArray> {
+        val user = userService.findUserByEmail(username) ?: return Optional.empty()
         return Optional.of(UUIDtoByteArray(user.id));
     }
 
-    override fun getUsernameForUserHandle(p0: ByteArray): Optional<String> {
-        if (p0.isEmpty) {
+    override fun getUsernameForUserHandle(userHandler: ByteArray): Optional<String> {
+        if (userHandler.isEmpty) {
             return Optional.empty()
         }
-        val user = userService.findUserById(ByteArrayToUUID(p0)) ?: return Optional.empty()
-        return Optional.of(user.email)
+        val user = userService.findUserById(ByteArrayToUUID(userHandler)) ?: return Optional.empty()
+        return Optional.of(user.username)
     }
 
-    override fun lookup(credentialId: ByteArray, userId: ByteArray): Optional<RegisteredCredential>? {
-        return userService.findUserById(ByteArrayToUUID(userId))?.credentials?.stream()
+    override fun lookup(credentialId: ByteArray, userHandler: ByteArray): Optional<RegisteredCredential>? {
+        return userService.findUserById(ByteArrayToUUID(userHandler))?.credentials?.stream()
             ?.filter {
                 credentialId == ByteArray.fromBase64Url(it.id)
             }?.findFirst()?.map {
@@ -40,8 +41,8 @@ class CredentialRepositoryImpl(val userService: UserService) : CredentialReposit
             }
     }
 
-    override fun lookupAll(p0: ByteArray): MutableSet<RegisteredCredential> {
-        val x = userService.findCredentialById(p0.base64Url)?.let { toRegisteredCredential(it) }?.let{ mutableSetOf(it) }
+    override fun lookupAll(credentialId: ByteArray): MutableSet<RegisteredCredential> {
+        val x = userService.findCredentialById(credentialId.base64Url)?.let { toRegisteredCredential(it) }?.let{ mutableSetOf(it) }
         if (x == null) {
             return mutableSetOf()
         }

@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.register
+package me.jovica.notesapp.security.webauthn.register
 
 import com.yubico.webauthn.RelyingParty
 import me.jovica.notesapp.security.user.UserAccount

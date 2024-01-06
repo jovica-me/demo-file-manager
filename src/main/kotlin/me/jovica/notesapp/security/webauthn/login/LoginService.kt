@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.login
+package me.jovica.notesapp.security.webauthn.login
 
 import com.yubico.webauthn.RelyingParty
 import org.springframework.stereotype.Service

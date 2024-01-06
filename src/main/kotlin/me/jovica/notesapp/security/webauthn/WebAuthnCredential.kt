@@ -1,10 +1,10 @@
-package me.jovica.notesapp.security.user
+package me.jovica.notesapp.security.webauthn
 
 import java.io.Serializable
 import java.util.*
 
 /**
- * DTO for {@link me.jovica.notesapp.security.user.WebAuthnCredentialEntity}
+ * DTO for {@link me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity}
  */
 data class WebAuthnCredential(
     val id: String ,
