@@ -1,4 +1,4 @@
-package me.jovica.notesapp.security.webauthn.login
+package me.jovica.notesapp.security.webauthn
 
 import com.yubico.webauthn.*
 

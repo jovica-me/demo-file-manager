@@ -1,4 +1,4 @@
-package me.jovica.notesapp.pages
+package me.jovica.notesapp.controller
 
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

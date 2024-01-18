@@ -1,14 +1,11 @@
-package me.jovica.notesapp.security.webauthn.register
+package me.jovica.notesapp.security.webauthn
 
 import com.yubico.webauthn.FinishRegistrationOptions
 import com.yubico.webauthn.RelyingParty
 import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.*
-import me.jovica.notesapp.security.user.UserAccountEntity
 import me.jovica.notesapp.security.user.UserAccountRepository
 import me.jovica.notesapp.security.user.UserService
-import me.jovica.notesapp.security.webauthn.ByteArrayToUUID
-import me.jovica.notesapp.security.webauthn.uuidtoByteArray
 import org.springframework.stereotype.Service
 
 @Service

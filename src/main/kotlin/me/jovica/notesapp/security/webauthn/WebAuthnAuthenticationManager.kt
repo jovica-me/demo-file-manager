@@ -12,8 +12,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import me.jovica.notesapp.api.START_LOGIN_REQUEST
-import me.jovica.notesapp.security.webauthn.login.LoginService
+import me.jovica.notesapp.controller.START_LOGIN_REQUEST
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AbstractAuthenticationToken
