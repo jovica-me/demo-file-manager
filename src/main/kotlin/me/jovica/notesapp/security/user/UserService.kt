@@ -1,7 +1,6 @@
 package me.jovica.notesapp.security.user
 
 import com.yubico.webauthn.RegistrationResult
-import me.jovica.notesapp.security.webauthn.WebAuthnCredential
 import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation

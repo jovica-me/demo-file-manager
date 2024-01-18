@@ -2,9 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
+
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
+<main>
+    <form id="register">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" placeholder="username" autocomplete="username webauthn"/>
+        </div>
+        <button type="submit">
+            Login  aaaaaaaaaaaaaaaaaa
+        </button>
+    </form>
+</main>
+<script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
+        integrity="sha256-6FDJThePHfVUS4K4DQS5PjeJidyRHVefT6XP1ooex7Q=" crossorigin="anonymous"></script>
+<script defer th:inline="javascript">
+
+    const {
+        browserSupportsWebAuthn,
+        startRegistration,
+        startAuthentication,
+        browserSupportsWebAuthnAutofill,
+    } = SimpleWebAuthnBrowser;
+
+    const formEl = document.getElementById("register")
+    const usernameEl = document.getElementById("username")
+    const fullNameEl = document.getElementById("fullName")
+
+    const token = /*[[${_csrf.token}]]*/ "token"
+    const header = /*[[${_csrf.headerName}]]*/ "header"
+    let head = {
+        "Content-Type": "application/json"
+    }
+    head[`${header}`] = token
+
+    formEl.addEventListener("submit", startLogin)
+
+    browserSupportsWebAuthnAutofill().then(async(supported)=>{
+        if(supported) {
+            await loginProcess(true);
+        }
+    })
+
+    async function loginProcess(startConditionalUI = false) {
+        let username = usernameEl.value;
+
+        if(startConditionalUI === true) {
+            username = undefined;
+        }
+
+        const data = JSON.stringify({
+            username
+        })
+        try {
+            const res = await fetch("/api/webauthn/login/start", {
+                method: "POST",
+                headers: head,
+                body: data,
+            })
+            const startLoginJson = await res.json()
+
+            delete startLoginJson["extensions"]
+            delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
+            console.log(startLoginJson)
+
+            const value = await startAuthentication(startLoginJson, false)
+            console.log(value)
+
+            const finishRes = await fetch("/api/webauthn/login/finish", {
+                method: "POST",
+                headers: head,
+                body: JSON.stringify(value),
+            })
+            console.log(await finishRes.json())
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async function startLogin(e) {
+        e.preventDefault()
+        await loginProcess();
+
+
+    }
+</script>
 
 </body>
 </html>

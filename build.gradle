@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation "com.yubico:webauthn-server-core:2.5.0"
+	implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

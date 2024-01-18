@@ -52,7 +52,7 @@
         const fullName = fullNameEl.value;
 
         const data = JSON.stringify({
-            username, fullName
+            username: username, fullName:fullName
         })
         try {
             const res = await fetch("/api/webauthn/register/start", {
@@ -61,14 +61,10 @@
                 body: data,
             })
             const startJSON = await res.json()
-            const registerrrJson = {
-                ...startJSON, ...{
-                    "extensions": {
-                        "credProps": true
-                    }
-                }
-            }
-            const value = await startRegistration(registerrrJson)
+
+            delete startJSON["extensions"]
+
+            const value = await startRegistration(startJSON)
             console.log(value)
 
             const finishRes = await fetch("/api/webauthn/register/finish", {

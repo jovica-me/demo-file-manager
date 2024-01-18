@@ -95,17 +95,7 @@ fun ByteArrayToUUID(byteArray: ByteArray): UUID {
     return UUID(high, low)
 }
 
-fun toRegisteredCredential(fidoCredential: WebAuthnCredential): RegisteredCredential {
-    try {
-        return RegisteredCredential.builder()
-            .credentialId(ByteArray.fromBase64Url(fidoCredential.id))
-            .userHandle(uuidtoByteArray(fidoCredential.userId))
-            .publicKeyCose(ByteArray.fromBase64Url(fidoCredential.publicKey))
-            .build()
-    } catch (e: Base64UrlException) {
-        throw java.lang.RuntimeException(e)
-    }
-}
+
 
 fun toPublicKeyCredentialDescriptor(
     cred: WebAuthnCredentialEntity

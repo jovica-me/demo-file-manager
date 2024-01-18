@@ -24,7 +24,11 @@ class RelyingPartyConfiguration(val credentialRepository: CredentialRepository) 
                         .name(appName)
                         .build()
 
-        val relyingParty = RelyingParty.builder().identity(rpIdentity).credentialRepository(credentialRepository).allowOriginPort(true).build()
+        val relyingParty = RelyingParty.builder()
+            .identity(rpIdentity)
+            .credentialRepository(credentialRepository)
+            .allowOriginPort(true)
+            .build()
 
         return relyingParty
     }
