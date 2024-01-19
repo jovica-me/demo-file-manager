@@ -17,6 +17,7 @@
 
         <div sec:authorize="isAuthenticated()">
             <button hx-get="/logout"> Log out</button>
+            <p sec:authorize="hasRole('ROLE_USER')">User</p>
         </div>
         <div sec:authorize="!isAuthenticated()">
             <button id="nav-login" type="submit" hx-disable>

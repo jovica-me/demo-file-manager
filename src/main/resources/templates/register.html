@@ -14,78 +14,77 @@
 <body>
 <main>
     <section layout:fragment="content">
-    <form id="register" hx-disable>
-        <div>
-            <label for="username">Username</label>
-            <input id="username" name="username" placeholder="username"/>
-            <label for="fullName">Full name</label>
-            <input id="fullName" name="name" placeholder="Pera">
+        <form id="register" hx-disable>
+                <label for="username">Username</label>
+                <input id="username" name="username" placeholder="username"/>
+                <label for="fullName">Full name</label>
+                <input id="fullName" name="name" placeholder="Pera">
 
-        </div>
-        <button type="submit">
-            Register
-        </button>
-    </form>
-        <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
-                integrity="sha256-6FDJThePHfVUS4K4DQS5PjeJidyRHVefT6XP1ooex7Q=" crossorigin="anonymous"></script>
-        <script defer th:inline="javascript">
+            <button type="submit" hx-disable>
+                Register
+            </button>
+            <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
+                    integrity="sha256-6FDJThePHfVUS4K4DQS5PjeJidyRHVefT6XP1ooex7Q=" crossorigin="anonymous"></script>
+            <script defer th:inline="javascript">
 
-            const {
-                browserSupportsWebAuthn,
-                startRegistration,
-                startAuthentication,
-                browserSupportsWebAuthnAutofill,
-            } = SimpleWebAuthnBrowser;
+                const {
+                    browserSupportsWebAuthn,
+                    startRegistration,
+                    startAuthentication,
+                    browserSupportsWebAuthnAutofill,
+                } = SimpleWebAuthnBrowser;
 
-            const formEl = document.getElementById("register")
-            const usernameEl = document.getElementById("username")
-            const fullNameEl = document.getElementById("fullName")
+                const formEl = document.getElementById("register")
+                const usernameEl = document.getElementById("username")
+                const fullNameEl = document.getElementById("fullName")
 
-            const token = /*[[${_csrf.token}]]*/ "token"
-            const header = /*[[${_csrf.headerName}]]*/ "header"
-            let head = {
-                "Content-Type": "application/json"
-            }
-            head[`${header}`] = token
-
-            formEl.addEventListener("submit", startRegister)
-
-            async function startRegister(e) {
-                e.preventDefault()
-                const username = usernameEl.value;
-                const fullName = fullNameEl.value;
-
-                const data = JSON.stringify({
-                    username: username, fullName:fullName
-                })
-                try {
-                    const res = await fetch("/api/webauthn/register/start", {
-                        method: "POST",
-                        headers: head,
-                        body: data,
-                    })
-                    const startJSON = await res.json()
-
-                    delete startJSON["extensions"]
-
-                    const value = await startRegistration(startJSON)
-                    console.log(value)
-
-                    const finishRes = await fetch("/api/webauthn/register/finish", {
-                        method: "POST",
-                        headers: head,
-                        body: JSON.stringify(value),
-                    })
-                    console.log(await finishRes.json())
-                    window.location="/"
-                } catch (e) {
-                    console.log(e)
-                    window.location="/login?error=error"
+                const token = /*[[${_csrf.token}]]*/ "token"
+                const header = /*[[${_csrf.headerName}]]*/ "header"
+                let head = {
+                    "Content-Type": "application/json"
                 }
+                head[`${header}`] = token
+
+                formEl.addEventListener("submit", startRegister)
+
+                async function startRegister(e) {
+                    e.preventDefault()
+                    const username = usernameEl.value;
+                    const fullName = fullNameEl.value;
+
+                    const data = JSON.stringify({
+                        username: username, fullName: fullName
+                    })
+                    try {
+                        const res = await fetch("/api/webauthn/register/start", {
+                            method: "POST",
+                            headers: head,
+                            body: data,
+                        })
+                        const startJSON = await res.json()
+
+                        delete startJSON["extensions"]
+
+                        const value = await startRegistration(startJSON)
+                        console.log(value)
+
+                        const finishRes = await fetch("/api/webauthn/register/finish", {
+                            method: "POST",
+                            headers: head,
+                            body: JSON.stringify(value),
+                        })
+                        console.log(await finishRes.json())
+                        window.location = "/"
+                    } catch (e) {
+                        console.log(e)
+                        window.location = "/login?error=error"
+                    }
 
 
-            }
-        </script>
+                }
+            </script>
+        </form>
+
     </section>
 </main>
 

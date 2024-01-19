@@ -2,15 +2,15 @@ package me.jovica.notesapp.controller
 
 import com.yubico.webauthn.AssertionRequest
 import com.yubico.webauthn.data.*
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import me.jovica.notesapp.security.webauthn.LogInStartRequest
 import me.jovica.notesapp.security.webauthn.LoginService
 import me.jovica.notesapp.security.webauthn.RegistrationService
 import me.jovica.notesapp.security.webauthn.RegistrationStartRequest
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.*
+
 
 @RestController
 @RequestMapping("/api/webauthn")
@@ -63,6 +63,14 @@ class ApiWebAuthnController(var registrationService: RegistrationService, var lo
         val finish = loginService.finish(options, request)
 
         return finish.isSuccess
+    }
+
+    @GetMapping("/login/test")
+    fun testRole(request:HttpServletRequest): String {
+        val auth = SecurityContextHolder.getContext().authentication
+        var s = ""
+        auth.authorities.forEach { s+=it }
+        return s
     }
 }
 

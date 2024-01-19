@@ -18,16 +18,13 @@ open class UserAccountEntity {
 
 
     @Column(name = "username")
-    open var username: String? = null
+    open var username: String = ""
 
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "user_id")
     open var credentials: MutableSet<WebAuthnCredentialEntity> = mutableSetOf()
 
-
-//  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//  @JoinColumn(name = "user_id")
-//  private Set<FidoCredentialEntity> credentials = Set.of();
-
+    @OneToMany(targetEntity = AuthoritiesEntity::class, cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    open var authorities: MutableList<AuthoritiesEntity> = mutableListOf()
 
 }
