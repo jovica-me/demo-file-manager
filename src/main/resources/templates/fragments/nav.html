@@ -1,0 +1,90 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+
+    <title>Hi</title>
+</head>
+<body>
+<nav layout:fragment="nav" id="nav" hx-post="/ui/update-nav" hx-trigger="update-nav from:body">
+    <div class="">
+        <a class="" href="/">Home</a>
+        <a class="" href="/login">Login</a>
+        <a class="" href="register">Register</a>
+
+
+        <div sec:authorize="isAuthenticated()">
+            <button hx-get="/logout"> Log out</button>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <button id="nav-login" type="submit" hx-disable>
+                Login
+            </button>
+
+            <script defer src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
+                    integrity="sha256-6FDJThePHfVUS4K4DQS5PjeJidyRHVefT6XP1ooex7Q=" crossorigin="anonymous"></script>
+            <script defer th:inline="javascript">
+
+
+                const navLoginButton = document.getElementById("nav-login")
+
+                const ntoken = /*[[${_csrf.token}]]*/ "token"
+                const nheader = /*[[${_csrf.headerName}]]*/ "header"
+                let nhead = {
+                    "Content-Type": "application/json"
+                }
+                nhead[`${nheader}`] = ntoken
+
+                navLoginButton.addEventListener("click", nstartLogin)
+
+                async function navloginProcess(startConditionalUI = false) {
+                    let username = "";
+
+                    if (startConditionalUI === true) {
+                        username = undefined;
+                    }
+
+                    const data = JSON.stringify({
+                        username
+                    })
+                    try {
+                        const res = await fetch("/api/webauthn/login/start", {
+                            method: "POST",
+                            headers: nhead,
+                            body: data,
+                        })
+                        const startLoginJson = await res.json()
+
+                        delete startLoginJson["extensions"]
+                        delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
+                        console.log(startLoginJson)
+
+                        const value = await SimpleWebAuthnBrowser.startAuthentication(startLoginJson, false)
+                        console.log(value)
+
+                        const finishRes = await fetch("/api/webauthn/login/finish", {
+                            method: "POST",
+                            headers: nhead,
+                            body: JSON.stringify(value),
+                        })
+                        console.log(await finishRes.json())
+                        location.reload()
+                    } catch (e) {
+                        console.log(e)
+                        location.reload()
+                    }
+                }
+
+                async function nstartLogin(e) {
+                    e.preventDefault()
+                    await navloginProcess();
+                }
+            </script>
+
+        </div>
+    </div>
+</nav>
+</body>
+</html>

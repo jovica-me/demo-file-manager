@@ -31,6 +31,9 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation "com.yubico:webauthn-server-core:2.5.0"
 	implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	implementation "io.github.wimdeblauwe:htmx-spring-boot:3.2.0"
+	implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.2.0"
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

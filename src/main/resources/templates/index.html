@@ -1,14 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html >
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
+
 </head>
 <body>
 <main>
-    <a href="register">Register</a>
-    <a href="login">Login</a>
-    <a href="hello">Hello</a>
+    <section layout:fragment="content">
+        <a href="register">Register</a>
+        <a href="login">Login</a>
+        <a href="hello">Hello</a>
+    </section>
 </main>
 </body>
 </html>

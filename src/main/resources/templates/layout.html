@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:hx="http://github.com/wimdeblauwe/htmx-spring-boot-thymeleaf"
+>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.10"
+            integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+            crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+</head>
+<body>
+
+<div layout:replace="~{fragments/nav :: nav}">
+
+</div>
+
+
+<!--/*@thymesVar id="message" type="java.lang.String"*/-->
+<div th:if="${message}" class="alert alert-primary text-center" role="alert">
+    <span th:text="${message}"></span>
+</div>
+<!--/*@thymesVar id="error" type="java.lang.String"*/-->
+<div th:if="${error}" class="" role="alert">
+    <span th:text="${error}"></span>
+</div>
+<section layout:fragment="content">
+    <p>Page content goes here</p>
+</section>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        const csrfHeader = /*[[${_csrf.headerName}]]*/ 'X-Sample-CSRF-Header';
+        const csrfToken = /*[[${_csrf.token}]]*/ 'sample-csrf-token';
+
+        event.detail.headers[csrfHeader] = csrfToken;
+    });
+
+    /*]]>*/
+</script>
+</body>
+</html>

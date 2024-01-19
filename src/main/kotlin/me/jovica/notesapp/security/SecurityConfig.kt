@@ -1,4 +1,4 @@
-package me.jovica.notesapp.config
+package me.jovica.notesapp.security
 
 import me.jovica.notesapp.security.webauthn.FidoLoginSuccessHandler
 import me.jovica.notesapp.security.webauthn.WebAuthnAuthenticationConverter
@@ -36,6 +36,8 @@ class SecurityConfig {
                 authorize("/", permitAll)
                 authorize("/login", permitAll)
                 authorize("/register", permitAll)
+                authorize("/logout",permitAll)
+                authorize("/ui/update-nav", permitAll)
                 authorize("/api/webauthn/login/start", permitAll)
                 authorize("/api/webauthn/login/finish", permitAll)
                 authorize("/api/webauthn/register/start", permitAll)
