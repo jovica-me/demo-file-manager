@@ -98,6 +98,7 @@ class WebAuthnAuthentication(
 ) : AbstractAuthenticationToken(authorities) {
 
     init {
+
         isAuthenticated = true
     }
 

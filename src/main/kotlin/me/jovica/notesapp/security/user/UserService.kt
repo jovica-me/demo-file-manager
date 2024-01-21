@@ -14,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class UserService(private val userAccountRepository: UserAccountRepository, private val authoritiesEntityRepository: AuthoritiesEntityRepository):UserDetailsService {
+class UserService(
+    private val userAccountRepository: UserAccountRepository,
+    private val authoritiesEntityRepository: AuthoritiesEntityRepository
+) : UserDetailsService {
 
     fun createUser(username: String?, fullName: String?): UserAccountEntity {
         if (fullName.isNullOrBlank())
@@ -22,23 +25,32 @@ class UserService(private val userAccountRepository: UserAccountRepository, priv
         if (username.isNullOrBlank())
             throw IllegalArgumentException(" username is null or blank")
 
-        userAccountRepository.findByUsername(username).apply { if (this != null) throw IllegalStateException("User already exists") }
+        userAccountRepository.findByUsername(username)
+            .apply { if (this != null) throw IllegalStateException("User already exists") }
 
-        val role = authoritiesEntityRepository.findByAuthority("ROLE_USER").orElseGet {
-            val r = AuthoritiesEntity()
-            r.authority = "ROLE_USER"
 
-            val radmin = AuthoritiesEntity()
-            radmin.authority = "ROLE_ADMIN"
-            authoritiesEntityRepository.save(radmin)
-            authoritiesEntityRepository.saveAndFlush(r)
+        val x = authoritiesEntityRepository.findByAuthority("ROLE_USER").let {
+            val res: AuthoritiesEntity;
+
+            if (it.isEmpty) {
+                val r = AuthoritiesEntity()
+                r.authority = "ROLE_USER"
+                val radmin = AuthoritiesEntity()
+                radmin.authority = "ROLE_ADMIN"
+                authoritiesEntityRepository.save(radmin)
+                res = authoritiesEntityRepository.saveAndFlush(r)
+            } else {
+                res = it.get()
+            }
+            res
         }
 
 
         val result = UserAccountEntity()
         result.username = username
         result.fullName = fullName
-        result.authorities = mutableListOf(role)
+        result.authorities = mutableSetOf(x)
+        AuthoritiesEntity()
         userAccountRepository.save(result)
 
         return result
@@ -89,6 +101,7 @@ class TokenUserDetails(private val userIdentity: UserAccountEntity) : UserDetail
         private const val serialVersionUID = 1L
         private val log = org.slf4j.LoggerFactory.getLogger(TokenUserDetails::class.java)
     }
+
     override fun toString(): String = userIdentity.username
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {

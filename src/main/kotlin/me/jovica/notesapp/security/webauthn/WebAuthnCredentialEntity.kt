@@ -1,8 +1,11 @@
 package me.jovica.notesapp.security.webauthn
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.proxy.HibernateProxy
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "web_authn_credential_entity")
@@ -19,6 +22,8 @@ open class WebAuthnCredentialEntity {
 
     @Column(name = "public_key")
     open var publicKey: String? = null
+
+
 
 
     final override fun equals(other: Any?): Boolean {

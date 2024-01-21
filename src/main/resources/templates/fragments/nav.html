@@ -14,18 +14,15 @@
         <a class="" href="/login">Login</a>
         <a class="" href="register">Register</a>
 
-
         <div sec:authorize="isAuthenticated()">
             <button hx-get="/logout"> Log out</button>
-            <p sec:authorize="hasRole('ROLE_USER')">User</p>
         </div>
         <div sec:authorize="!isAuthenticated()">
             <button id="nav-login" type="submit" hx-disable>
                 Login
             </button>
 
-            <script defer src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
-                    integrity="sha256-6FDJThePHfVUS4K4DQS5PjeJidyRHVefT6XP1ooex7Q=" crossorigin="anonymous"></script>
+            <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js" integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g==" crossorigin="anonymous"></script>
             <script defer th:inline="javascript">
 
 

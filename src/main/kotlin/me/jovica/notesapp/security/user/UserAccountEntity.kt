@@ -24,7 +24,12 @@ open class UserAccountEntity {
     @JoinColumn(name = "user_id")
     open var credentials: MutableSet<WebAuthnCredentialEntity> = mutableSetOf()
 
-    @OneToMany(targetEntity = AuthoritiesEntity::class, cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    open var authorities: MutableList<AuthoritiesEntity> = mutableListOf()
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_account_authoritiesEntities",
+        joinColumns = [JoinColumn(name = "userAccountEntity_id")],
+        inverseJoinColumns = [JoinColumn(name = "authoritiesEntities_id")]
+    )
+    open var authorities: MutableSet<AuthoritiesEntity> = mutableSetOf()
 }

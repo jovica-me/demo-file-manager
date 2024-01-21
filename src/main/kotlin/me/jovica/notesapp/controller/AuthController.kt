@@ -22,12 +22,12 @@ class AuthController {
         if(error.equals("error")) {
             model.addAttribute("error","error while logging in")
         }
-        return "login"
+        return "pages/login"
     }
 
     @GetMapping("/register")
     fun register(model: Model): String {
-        return "register"
+        return "pages/register"
     }
 
     val logoutHandler = SecurityContextLogoutHandler()
