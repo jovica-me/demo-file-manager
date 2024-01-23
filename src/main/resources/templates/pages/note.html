@@ -1,0 +1,45 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout.html}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+
+</head>
+<body>
+<main>
+    <section layout:fragment="content">
+        <form method="POST">
+            <input type="text" name="noteName" th:value="${noteName}">
+            <textarea id="main-editor" ></textarea>
+            <input type="hidden" id="noteText" name="noteText" >
+            <input type="hidden" name="noteUUID" th:value="${noteUUID}" >
+            <input type="hidden" name="folderUUID" th:value="${noteFolderUUID}" >
+            <button hx-post="" hx-swap="outerHTML" >Save</button>
+        </form>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const easymde = new EasyMDE({
+                initialValue: /*[[${noteText}]]*/ "# Hello",
+                element: document.getElementById('main-editor'),
+            });
+            const textEl = document.getElementById("noteText");
+            textEl.value = easymde.value();
+            easymde.codemirror.on("change", ()=> {
+                    textEl.value = easymde.value()
+                }
+            )
+            /*]]>*/
+        </script>
+    </section>
+</main>
+</body>
+</html>

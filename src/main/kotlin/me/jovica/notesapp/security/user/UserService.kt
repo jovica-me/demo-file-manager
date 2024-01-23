@@ -77,9 +77,9 @@ class UserService(
         return userAccountRepository.findById(userId)
     }
 
-    fun findUserByUsername(username: String): Optional<UserAccountEntity> {
-        val user: UserAccountEntity = userAccountRepository.findByUsername(username) ?: return Optional.empty()
-        return Optional.of(user)
+    fun findUserByUsername(username: String): UserAccountEntity {
+        val user: UserAccountEntity = userAccountRepository.findByUsername(username)?: throw IllegalStateException("User not found")
+        return user
     }
 
 

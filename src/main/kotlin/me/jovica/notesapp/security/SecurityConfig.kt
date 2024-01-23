@@ -31,7 +31,7 @@ class SecurityConfig {
     fun filterPagesChain(http: HttpSecurity, webAuthnAuthenticationManager: WebAuthnAuthenticationManager,userService: UserService): SecurityFilterChain {
 
         val authenticationFilter =
-            AuthenticationFilter(webAuthnAuthenticationManager, WebAuthnAuthenticationConverter())
+            AuthenticationFilter(webAuthnAuthenticationManager, WebAuthnAuthenticationConverter(userService))
         authenticationFilter.requestMatcher = AntPathRequestMatcher("/api/webauthn/login/finish")
         authenticationFilter.successHandler = FidoLoginSuccessHandler()
         authenticationFilter.setSecurityContextRepository(HttpSessionSecurityContextRepository())
@@ -51,7 +51,6 @@ class SecurityConfig {
                 authorize("/ui/update-nav", permitAll)
                 authorize("/api/webauthn/login/start", permitAll)
                 authorize("/api/webauthn/login/finish", permitAll)
-                authorize("/api/webauthn/login/test", permitAll)
                 authorize("/api/webauthn/register/start", permitAll)
                 authorize("/api/webauthn/register/finish", permitAll)
                 authorize(PathRequest.toStaticResources().atCommonLocations(), permitAll)

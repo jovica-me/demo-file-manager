@@ -8,11 +8,15 @@ import java.util.*
 @Table(name = "file_entity")
 open class FileEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     open var id: UUID? = null
 
     @Column(name = "name")
     open var name: String? = null
+
+    @Column(name = "text")
+    open var text: String? = null
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_account_entity_id", nullable = false)

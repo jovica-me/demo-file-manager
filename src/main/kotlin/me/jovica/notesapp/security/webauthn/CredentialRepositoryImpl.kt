@@ -16,23 +16,20 @@ import kotlin.jvm.optionals.toCollection
 @Repository
 class CredentialRepositoryImpl(val userService: UserService) : CredentialRepository {
     override fun getCredentialIdsForUsername(username: String?): MutableSet<PublicKeyCredentialDescriptor> {
+        if (username.isNullOrBlank()) throw IllegalStateException("username not provideid");
         return userService
-            .findUserByUsername(username!!)
-            .map { user ->
-                user.credentials.stream()
-                    .map { toPublicKeyCredentialDescriptor(it) }
-                    .collect(Collectors.toSet())
-            }.orElse(mutableSetOf())
+            .findUserByUsername(username)
+            .credentials.stream()
+            .map { toPublicKeyCredentialDescriptor(it) }
+            .collect(Collectors.toSet())
     }
 
     override fun getUserHandleForUsername(username: String?): Optional<ByteArray> {
-        return userService.findUserByUsername(username!!).map { user -> user.id?.let { uuidtoByteArray(it) } }
+        if (username.isNullOrBlank()) throw IllegalStateException("No username provided")
+        return Optional.ofNullable(userService.findUserByUsername(username).id?.let { uuidtoByteArray(it) })
     }
 
     override fun getUsernameForUserHandle(userHandler: ByteArray): Optional<String> {
-        if (userHandler.isEmpty) {
-            return Optional.empty()
-        }
         return userService
             .findUserById(ByteArrayToUUID(userHandler))
             .map { userAccount -> userAccount.username }
@@ -94,7 +91,6 @@ fun ByteArrayToUUID(byteArray: ByteArray): UUID {
     val low = byteBuffer.getLong()
     return UUID(high, low)
 }
-
 
 
 fun toPublicKeyCredentialDescriptor(

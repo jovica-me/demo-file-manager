@@ -12,12 +12,17 @@
     <div class="">
         <a class="" href="/">Home</a>
         <a class="" href="/login">Login</a>
-        <a class="" href="register">Register</a>
+        <a class="" href="/register">Register</a>
 
         <div sec:authorize="isAuthenticated()">
+            <a href="/note/new" >
+                New Note
+            </a>
+
             <button hx-get="/logout"> Log out</button>
         </div>
         <div sec:authorize="!isAuthenticated()">
+
             <button id="nav-login" type="submit" hx-disable>
                 Login
             </button>

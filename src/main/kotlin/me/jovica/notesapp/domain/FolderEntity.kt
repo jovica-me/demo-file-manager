@@ -9,6 +9,7 @@ import java.util.*
 @Table(name = "folder_entity")
 open class FolderEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
     open var id: UUID? = null
 
