@@ -7,6 +7,8 @@ import com.yubico.webauthn.data.*
 import me.jovica.notesapp.security.user.UserAccountRepository
 import me.jovica.notesapp.security.user.UserService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class RegistrationService(
@@ -14,6 +16,7 @@ class RegistrationService(
     val relyingParty: RelyingParty,
     val userAccountRepository: UserAccountRepository
 ) {
+    @Transactional(propagation = Propagation.REQUIRED)
     fun start(request: RegistrationStartRequest): PublicKeyCredentialCreationOptions {
         val user = userService.createUser(request.username, request.fullName)
 
@@ -27,7 +30,6 @@ class RegistrationService(
         val authenticatorSelectionCriteria =
             AuthenticatorSelectionCriteria.builder()
                 .residentKey(ResidentKeyRequirement.PREFERRED)
-                .authenticatorAttachment(AuthenticatorAttachment.CROSS_PLATFORM)
                 .userVerification(UserVerificationRequirement.PREFERRED)
                 .build()
 
@@ -44,6 +46,7 @@ class RegistrationService(
         return options
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     fun finish(
         options: PublicKeyCredentialCreationOptions,
         finishResponse: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs>
