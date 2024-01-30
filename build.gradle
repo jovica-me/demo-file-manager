@@ -34,6 +34,7 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	implementation "io.github.wimdeblauwe:htmx-spring-boot:3.2.0"
 	implementation "io.github.wimdeblauwe:htmx-spring-boot-thymeleaf:3.2.0"
+//	implementation "org.springframework.session:spring-session-jdbc"
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

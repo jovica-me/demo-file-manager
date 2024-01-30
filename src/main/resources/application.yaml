@@ -24,3 +24,6 @@ spring:
     password: BolU12.3
   application:
     name: RIS Notes app
+#  session:
+#    jdbc:
+#      initialize-schema: always
