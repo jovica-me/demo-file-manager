@@ -1,6 +1,10 @@
 package me.jovica.notesapp.security.user
 
 import com.yubico.webauthn.RegistrationResult
+import me.jovica.notesapp.domain.FolderEntity
+import me.jovica.notesapp.domain.FolderEntityRepository
+import me.jovica.notesapp.domain.UserEntity
+import me.jovica.notesapp.domain.UserEntityRepository
 import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
@@ -16,7 +20,8 @@ import java.util.*
 @Service
 class UserService(
     private val userAccountRepository: UserAccountRepository,
-    private val authoritiesEntityRepository: AuthoritiesEntityRepository
+    private val authoritiesEntityRepository: AuthoritiesEntityRepository, private val userEntityRepository: UserEntityRepository,
+    private val folderEntityRepository: FolderEntityRepository
 ) : UserDetailsService {
 
     fun createUser(username: String?, fullName: String?): UserAccountEntity {
@@ -46,14 +51,38 @@ class UserService(
         }
 
 
-        val result = UserAccountEntity()
-        result.username = username
-        result.fullName = fullName
-        result.authorities = mutableSetOf(x)
-        AuthoritiesEntity()
-        userAccountRepository.save(result)
 
-        return result
+
+        var userAccount = UserAccountEntity()
+        var user = UserEntity()
+        var topFolder = FolderEntity()
+
+        userAccount.username = username
+        userAccount.fullName = fullName
+        userAccount.authorities = mutableSetOf(x)
+        userAccount.userEntity = user
+        user.userAccount = userAccount
+
+        userAccount = userAccountRepository.save(userAccount)
+
+
+        user.topFolder = topFolder
+        topFolder.owner = user
+        topFolder.topFolderOfUser = user
+        topFolder.name = "Hello from - New folder"
+
+        userEntityRepository.save(user)
+
+
+//        topFolder = folderEntityRepository.save(topFolder)
+
+
+
+
+
+
+
+        return userAccount
 
     }
 

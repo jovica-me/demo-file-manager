@@ -23,5 +23,5 @@ spring:
     username: risibol
     password: BolU12.3
   application:
-    name: RIS Notes app
+    name: RIS
 

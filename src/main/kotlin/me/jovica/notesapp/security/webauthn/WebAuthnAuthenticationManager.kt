@@ -69,9 +69,11 @@ class WebAuthnAuthenticationConverter(val userService: UserService) : Authentica
             var userName: String;
             if(option.username.isEmpty) {
                     val userUUID = ByteArrayToUUID(finishRequest.response.userHandle
-                        .orElseThrow { throw IllegalStateException("Username error") })
+                        .orElseThrow { throw IllegalStateException("UserHandler error") })
+
                     val user = userService.findUserById(userUUID)
                         .orElseThrow { throw IllegalStateException("Username error") }
+
                 userName = user.username
             } else {
                 userName = option.username.get()

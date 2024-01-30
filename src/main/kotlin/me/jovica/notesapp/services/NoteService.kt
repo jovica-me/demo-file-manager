@@ -24,7 +24,7 @@ class NoteService(
             val x = FolderEntity()
             x.id = user.id
             x.name = "New Folder"
-            x.userAccountEntity = user;
+            x.owner = user.userEntity;
             folderEntityRepository.saveAndFlush(x)
         }
 
@@ -35,7 +35,7 @@ class NoteService(
         val file = FileEntity();
         file.folderEntity = folderFolderEntity
         file.name = "New File"
-        file.userAccountEntity = user
+        file.owner = user.userEntity
         return fileEntityRepository.saveAndFlush(file);
     }
 

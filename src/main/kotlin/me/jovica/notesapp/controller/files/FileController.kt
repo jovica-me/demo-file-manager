@@ -1,4 +1,4 @@
-package me.jovica.notesapp.controller
+package me.jovica.notesapp.controller.files
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
 import me.jovica.notesapp.security.webauthn.WebAuthnAuthentication
@@ -14,7 +14,7 @@ import java.util.*
 
 
 @Controller
-@RequestMapping("/note")
+@RequestMapping("/files/file")
 class FileController(
     val noteService: NoteService
 ) {
@@ -27,7 +27,7 @@ class FileController(
         model.addAttribute("noteText", file.text)
         model.addAttribute("noteFolderUUID", file.folderEntity?.id)
 
-        return "pages/note"
+        return "pages/files/note"
     }
 
     @GetMapping("/new")
@@ -42,9 +42,9 @@ class FileController(
     fun saveFile(@PathVariable("id") noteUUID: UUID, noteText: String, noteName: String): String {
         val x = noteService.updateTextAndTitle(noteUUID, noteText,noteName)
         if (x == 0) {
-            return "fragments/notes/failedtosave"
+            return "fragments/files/notes/failedtosave"
         }
-        return "fragments/notes/saved"
+        return "fragments/files/notes/saved"
     }
 
 

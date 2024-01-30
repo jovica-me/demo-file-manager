@@ -37,6 +37,22 @@
             formEl.addEventListener("submit", startLogin)
 
 
+            SimpleWebAuthnBrowser.browserSupportsWebAuthnAutofill().then(async (supported) => {
+                if (supported) {
+                    console.log('Setting up Conditional UI');
+                    try {
+                        await loginProcess(true);
+                    } catch (err) {
+                        if (err.name === 'AbortError') {
+                            console.log('Conditional UI request was aborted');
+                        } else {
+                            console.error('Conditional UI error:', err);
+                        }
+                    }
+                }
+            });
+
+
             async function loginProcess(startConditionalUI = false) {
                 let username = usernameEl.value;
 
@@ -75,14 +91,12 @@
                     }
                 } catch (e) {
                     console.log(e)
-                    window.location="/login?error=error"
                 }
             }
 
             async function startLogin(e) {
                 e.preventDefault()
                 await loginProcess();
-
 
             }
         </script>

@@ -1,7 +1,7 @@
 package me.jovica.notesapp.domain
 
 import jakarta.persistence.*
-import me.jovica.notesapp.security.user.UserAccountEntity
+import org.hibernate.proxy.HibernateProxy
 import java.util.*
 
 @Entity
@@ -18,13 +18,30 @@ open class FileEntity {
     @Column(name = "text")
     open var text: String? = null
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_account_entity_id", nullable = false)
-    open var userAccountEntity: UserAccountEntity? = null
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "folder_entity_id", nullable = false)
     open var folderEntity: FolderEntity? = null
 
 
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "owner_user_id", nullable = false)
+    open var owner: UserEntity? = null
+
+
+    final override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null) return false
+        val oEffectiveClass =
+            if (other is HibernateProxy) other.hibernateLazyInitializer.persistentClass else other.javaClass
+        val thisEffectiveClass =
+            if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
+        if (thisEffectiveClass != oEffectiveClass) return false
+        other as FileEntity
+
+        return id != null && id == other.id
+    }
+
+    final override fun hashCode(): Int =
+        if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass.hashCode() else javaClass.hashCode()
 }
