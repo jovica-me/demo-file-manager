@@ -11,7 +11,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
         tailwind.config = {
             darkMode: ["class"],
@@ -143,7 +143,7 @@
     <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 </head>
-<body>
+<body >
 
 <div layout:replace="~{fragments/nav :: nav}">
 
@@ -158,7 +158,7 @@
 <div th:if="${error}" class="" role="alert">
     <span th:text="${error}"></span>
 </div>
-<section layout:fragment="content">
+<section layout:fragment="content" >
     <p>Page content goes here</p>
 </section>
 <script th:inline="javascript">

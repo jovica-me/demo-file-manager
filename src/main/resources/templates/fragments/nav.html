@@ -8,16 +8,18 @@
     <title>Hi</title>
 </head>
 <body>
-<nav layout:fragment="nav" id="nav" hx-post="/ui/update-nav" hx-trigger="update-nav from:body">
+<nav layout:fragment="nav" id="nav" hx-post="/ui/update-nav" hx-trigger="update-nav from:body" class="fixed top-0 left-0 right-0 bg-white">
 
     <div class="!visible transition-opacity duration-150 !opacity-100">
-        <div class="flex items-center justify-between px-4 py-2 border-b"><a class="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"
-            >
-                <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
-            </svg>
-            <span class="text-lg font-semibold">Feed</span></a>
+        <div class="flex items-center justify-between px-4 py-2 border-b">
+            <a class="flex items-center gap-2" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="h-6 w-6">
+                    <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+                </svg>
+                <span class="text-lg font-semibold">Feed</span>
+            </a>
 
             <nav class="flex gap-4" sec:authorize="isAuthenticated()">
 
@@ -39,6 +41,7 @@
             </nav>
 
             <nav class="flex gap-4" sec:authorize="!isAuthenticated()">
+
                 <a href="/register"
                    class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
                     Register
@@ -51,6 +54,7 @@
                 <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js"
                         integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g=="
                         crossorigin="anonymous"></script>
+
                 <script defer th:inline="javascript">
 
 
@@ -99,7 +103,7 @@
                             location.reload()
                         } catch (e) {
                             console.log(e)
-                            location.reload()
+                            location.href = "/login"
                         }
                     }
 

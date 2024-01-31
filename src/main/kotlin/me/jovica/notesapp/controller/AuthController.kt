@@ -19,6 +19,10 @@ class AuthController {
 
     @GetMapping("/login")
     fun login(model: Model, @RequestParam(required = false) error: String?): String {
+//        val auth = SecurityContextHolder.getContext().authentication
+//
+//       if(auth.isAuthenticated) return "redirect:/"
+
         if(error.equals("error")) {
             model.addAttribute("error","error while logging in")
         }
@@ -27,6 +31,8 @@ class AuthController {
 
     @GetMapping("/register")
     fun register(model: Model): String {
+//        val auth = SecurityContextHolder.getContext().authentication
+//        if(auth.isAuthenticated) return "redirect:/"
         return "pages/register"
     }
 

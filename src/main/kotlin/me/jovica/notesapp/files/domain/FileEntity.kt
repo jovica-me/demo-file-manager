@@ -19,7 +19,6 @@ open class FileEntity {
     @Column(name = "text")
     open var text: String? = null
 
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "folder_entity_id", nullable = false)
     open var folderEntity: FolderEntity? = null

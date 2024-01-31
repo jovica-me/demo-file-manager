@@ -7,86 +7,114 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <meta th:name="_csrf" th:content="${_csrf.token}"/>
-    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
 </head>
 <body>
-<main>
-    <section layout:fragment="content">
-        <form id="register" hx-disable>
-                <label for="username">Username</label>
-                <input id="username" name="username" placeholder="username"/>
-                <label for="fullName">Full name</label>
-                <input id="fullName" name="name" placeholder="Pera">
 
-            <button type="submit" hx-disable>
-                Register
-            </button>
-            <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js" integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g==" crossorigin="anonymous"></script>
-            <script defer th:inline="javascript">
+<main layout:fragment="content" class="bg-gray-100 flex flex-col items-center justify-center min-h-dvh ">
 
-                const {
-                    browserSupportsWebAuthn,
-                    startRegistration,
-                    startAuthentication,
-                    browserSupportsWebAuthnAutofill,
-                } = SimpleWebAuthnBrowser;
+    <div class="w-full max-w-md">
+        <div class="grid gap-4 bg-white shadow-md rounded px-8 pt-6 pb-8 ">
+            <h2 class="text-3xl font-bold  text-gray-700 ">Register</h2>
+            <form id="register" hx-disable>
+                <div class="mb-4">
+                    <label
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            for="username"
+                    >
+                        Username
+                    </label>
+                    <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="username"
+                            placeholder="username"
+                    />
+                </div>
+                <div class="mb-4">
+                    <label for="fullName"
+                           class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 
-                const formEl = document.getElementById("register")
-                const usernameEl = document.getElementById("username")
-                const fullNameEl = document.getElementById("fullName")
+                    >Full name</label>
+                    <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="fullName" name="name" placeholder="Pera">
+                </div>
+                <button
+                        hx-disable
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
 
-                const token = /*[[${_csrf.token}]]*/ "token"
-                const header = /*[[${_csrf.headerName}]]*/ "header"
-                let head = {
-                    "Content-Type": "application/json"
-                }
-                head[`${header}`] = token
-
-                formEl.addEventListener("submit", startRegister)
-
-                async function startRegister(e) {
-                    e.preventDefault()
-                    const username = usernameEl.value;
-                    const fullName = fullNameEl.value;
-
-                    const data = JSON.stringify({
-                        username: username, fullName: fullName
-                    })
-                    try {
-                        const res = await fetch("/api/webauthn/register/start", {
-                            method: "POST",
-                            headers: head,
-                            body: data,
-                        })
-                        const startJSON = await res.json()
-
-                        startJSON["extensions"] = []
-
-                        const value = await startRegistration(startJSON)
-                        console.log(value)
-
-                        const finishRes = await fetch("/api/webauthn/register/finish", {
-                            method: "POST",
-                            headers: head,
-                            body: JSON.stringify(value),
-                        })
-                        console.log(await finishRes.json())
-                        // window.location = "/"
-                    } catch (e) {
-                        console.log(e)
-                        // window.location = "/login?error=error"
-                    }
+                        type="submit"
+                >
+                    Register
+                </button>
+            </form>
 
 
-                }
-            </script>
-        </form>
+        </div>
 
-    </section>
+    </div>
+
+    <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"
+            integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g=="
+            crossorigin="anonymous"></script>
+    <script defer th:inline="javascript">
+
+        const {
+            browserSupportsWebAuthn,
+            startRegistration,
+            startAuthentication,
+            browserSupportsWebAuthnAutofill,
+        } = SimpleWebAuthnBrowser;
+
+        const formEl = document.getElementById("register")
+        const usernameEl = document.getElementById("username")
+        const fullNameEl = document.getElementById("fullName")
+
+        const token = /*[[${_csrf.token}]]*/ "token"
+        const header = /*[[${_csrf.headerName}]]*/ "header"
+        let head = {
+            "Content-Type": "application/json"
+        }
+        head[`${header}`] = token
+
+        formEl.addEventListener("submit", startRegister)
+
+        async function startRegister(e) {
+            e.preventDefault()
+            const username = usernameEl.value;
+            const fullName = fullNameEl.value;
+
+            const data = JSON.stringify({
+                username: username, fullName: fullName
+            })
+            try {
+                const res = await fetch("/api/webauthn/register/start", {
+                    method: "POST",
+                    headers: head,
+                    body: data,
+                })
+                const startJSON = await res.json()
+
+                startJSON["extensions"] = []
+
+                const value = await startRegistration(startJSON)
+                console.log(value)
+
+                const finishRes = await fetch("/api/webauthn/register/finish", {
+                    method: "POST",
+                    headers: head,
+                    body: JSON.stringify(value),
+                })
+                console.log(await finishRes.json())
+                window.location = "/files"
+            } catch (e) {
+                console.log(e)
+                // window.location = "/login?error=error"
+            }
+
+
+        }
+    </script>
 </main>
-
-
 </body>
 </html>

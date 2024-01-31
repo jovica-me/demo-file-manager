@@ -2,107 +2,143 @@
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout.html}"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout " xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 
 </head>
 <body>
-<main>
-    <section layout:fragment="content">
-        <form id="login" hx-disable>
-            <div>
-                <label for="username">Username</label>
-                <input id="username" placeholder="username" />
-            </div>
-            <button type="submit">
-                Login aaaaaaaaaaaaaaaaaa
-            </button>
-        </form>
-        <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js" integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g==" crossorigin="anonymous"></script>
-        <script defer th:inline="javascript">
+<main layout:fragment="content" class="bg-gray-100 flex flex-col items-center justify-center min-h-dvh ">
+
+    <div class="w-full max-w-md">
+        <div class="grid gap-6 bg-white shadow-md rounded px-8 pt-6 pb-8  ">
+            <h2 class="text-3xl font-bold text-gray-700 ">Login</h2>
+            <form id="fastLogin" hx-disable>
+                <button
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+
+                >
+                    Fast Login
+                </button>
+            </form>
+
+            <form id="login" class="grid gap-2" hx-disable>
+                <div class="grid gap-1">
+                    <label
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            for="username"
+                    >
+                        Username
+                    </label>
+                    <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background  text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="username"
+                            placeholder="username"
+                    />
+                </div>
+                <button
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full "
+                        type="submit"
+                >
+                    Login
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js"
+            integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g=="
+            crossorigin="anonymous"></script>
+    <script defer th:inline="javascript">
 
 
-            const formEl = document.getElementById("login")
-            const usernameEl = document.getElementById("username")
+        const formEl = document.getElementById("login")
+        const usernameEl = document.getElementById("username")
 
-            const token = /*[[${_csrf.token}]]*/ "token"
-            const header = /*[[${_csrf.headerName}]]*/ "header"
-            let head = {
-                "Content-Type": "application/json"
-            }
-            head[`${header}`] = token
-
-            formEl.addEventListener("submit", startLogin)
+        const fastLogin = document.getElementById("fastLogin")
 
 
-            // SimpleWebAuthnBrowser.browserSupportsWebAuthnAutofill().then(async (supported) => {
-            //     if (supported) {
-            //         console.log('Setting up Conditional UI');
-            //         try {
-            //             await loginProcess(true);
-            //         } catch (err) {
-            //             if (err.name === 'AbortError') {
-            //                 console.log('Conditional UI request was aborted');
-            //             } else {
-            //                 console.error('Conditional UI error:', err);
-            //             }
-            //         }
-            //     }
-            // });
+        const token = /*[[${_csrf.token}]]*/ "token"
+        const header = /*[[${_csrf.headerName}]]*/ "header"
+        let head = {
+            "Content-Type": "application/json"
+        }
+        head[`${header}`] = token
 
+        formEl.addEventListener("submit", startLogin)
 
-            async function loginProcess(startConditionalUI = false) {
-                let username = usernameEl.value;
+        fastLogin.addEventListener("submit", startFastLogin)
 
-                if (startConditionalUI === true ) {
-                    username = undefined;
-                }
-
-                const data = JSON.stringify({
-                    username
-                })
+        SimpleWebAuthnBrowser.browserSupportsWebAuthnAutofill().then(async (supported) => {
+            if (supported) {
+                console.log('Setting up Conditional UI');
                 try {
-                    const res = await fetch("/api/webauthn/login/start", {
-                        method: "POST",
-                        headers: head,
-                        body: data,
-                    })
-                    const startLoginJson = await res.json()
-
-                    delete startLoginJson["extensions"]
-                    delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
-                    console.log(startLoginJson)
-
-                    const value = await SimpleWebAuthnBrowser.startAuthentication(startLoginJson, false)
-                    console.log(value)
-
-                    const finishRes = await fetch("/api/webauthn/login/finish", {
-                        method: "POST",
-                        headers: head,
-                        body: JSON.stringify(value),
-                    })
-                    const fine = await finishRes.json()
-                    if(fine.good === "good") {
-                        window.location="/"
+                    await loginProcess(true);
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        console.log('Conditional UI request was aborted');
                     } else {
-                        // window.location="/login?error=error"
+                        console.error('Conditional UI error:', err);
                     }
-                } catch (e) {
-                    console.log(e)
                 }
             }
+        });
 
-            async function startLogin(e) {
-                e.preventDefault()
-                await loginProcess();
 
+        async function loginProcess(startConditionalUI = false, username = usernameEl.value) {
+
+            if (startConditionalUI === true) {
+                username = undefined;
             }
-        </script>
-    </section>
-</main>
 
+            const data = JSON.stringify({
+                username
+            })
+            try {
+                const res = await fetch("/api/webauthn/login/start", {
+                    method: "POST",
+                    headers: head,
+                    body: data,
+                })
+                const startLoginJson = await res.json()
+
+                delete startLoginJson["extensions"]
+                delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
+                console.log(startLoginJson)
+
+                const value = await SimpleWebAuthnBrowser.startAuthentication(startLoginJson, false)
+                console.log(value)
+
+                const finishRes = await fetch("/api/webauthn/login/finish", {
+                    method: "POST",
+                    headers: head,
+                    body: JSON.stringify(value),
+                })
+                const fine = await finishRes.json()
+                if (fine.good === "good") {
+                    window.location = "/"
+                } else {
+                    // window.location="/login?error=error"
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+
+        async function startLogin(e) {
+            e.preventDefault()
+            await loginProcess(false);
+        }
+
+        async function startFastLogin(e) {
+            e.preventDefault()
+            await loginProcess(false, undefined);
+        }
+    </script>
+</main>
 
 </body>
 </html>
