@@ -25,6 +25,7 @@ class UserService(
     private val folderEntityRepository: FolderEntityRepository
 ) : UserDetailsService {
 
+    @Transactional(propagation = Propagation.REQUIRED)
     fun createUser(username: String?, fullName: String?): UserAccountEntity {
         if (fullName.isNullOrBlank()) throw IllegalArgumentException(" fullName is null or blank")
         if (username.isNullOrBlank()) throw IllegalArgumentException(" username is null or blank")

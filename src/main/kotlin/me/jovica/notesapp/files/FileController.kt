@@ -1,8 +1,7 @@
-package me.jovica.notesapp.controller.files
+package me.jovica.notesapp.files
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
 import me.jovica.notesapp.security.webauthn.WebAuthnAuthentication
-import me.jovica.notesapp.services.NoteService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -16,31 +15,29 @@ import java.util.*
 @Controller
 @RequestMapping("/files/file")
 class FileController(
-    val noteService: NoteService
+    val fileService: FileService
 ) {
-
     @GetMapping("/{id}")
     fun pageFile(@PathVariable("id") noteUUID: UUID, model: Model): String {
-        val file = noteService.getFile(noteUUID);
+        val file = fileService.getFile(noteUUID);
         model.addAttribute("noteUUID", file.id)
         model.addAttribute("noteName", file.name)
         model.addAttribute("noteText", file.text)
         model.addAttribute("noteFolderUUID", file.folderEntity?.id)
-
         return "pages/files/note"
     }
 
     @GetMapping("/new")
     fun redirectNewFile(): String {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        val file = noteService.newFile(auth.username);
-        return "redirect:/note/" + file.id;
+        val file = fileService.newFile(auth.username);
+        return "redirect:/files/file/" + file.id;
     }
 
     @HxRequest
     @PostMapping("/{id}")
     fun saveFile(@PathVariable("id") noteUUID: UUID, noteText: String, noteName: String): String {
-        val x = noteService.updateTextAndTitle(noteUUID, noteText,noteName)
+        val x = fileService.updateTextAndTitle(noteUUID, noteText,noteName)
         if (x == 0) {
             return "fragments/files/notes/failedtosave"
         }

@@ -1,0 +1,275 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout.html}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+<head>
+    <meta charset="UTF-8">
+    <!--/*@thymesVar id="folderName" type="java.lang.String"*/-->
+    <title th:text="${folderName}"></title>
+</head>
+<body>
+<main>
+    <section layout:fragment="content">
+
+        <!--
+        // v0 by Vercel.
+        // https://v0.dev/t/rLVtUuOUNPB
+        -->
+        <div class="grid min-h-screen w-full lg:grid-cols-[280px_1fr] ">
+            <div class="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
+                <div class="flex h-full max-h-screen flex-col gap-2">
+                    <div class="flex h-[60px] items-center border-b px-6"><a
+                            class="flex items-center gap-2 font-semibold" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="h-6 w-6">
+                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                        </svg>
+                        <span class="">File Manager</span></a>
+                        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground ml-auto h-8 w-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="h-4 w-4">
+                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                            </svg>
+                            <span class="sr-only">Toggle notifications</span></button>
+                    </div>
+                    <div class="flex-1 overflow-auto py-2">
+                        <nav class="grid items-start px-4 text-sm font-medium">
+                            <a
+                                class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                                href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="h-4 w-4">
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                            </svg>
+                            My Documents
+                        </a><a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                               href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="h-4 w-4">
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                            </svg>
+                            Shared with me
+                        </a><a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                               href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="h-4 w-4">
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                            </svg>
+                            Starred
+                        </a>
+                            <a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                               href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="h-4 w-4">
+                                <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                            </svg>
+                            Trash
+                        </a>
+                        </nav>
+                    </div>
+                    <div class="mt-auto p-4">
+                        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 w-full">
+                            New Folder
+                        </button>
+                        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 w-full mt-2">
+                            Upload File
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <header class="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
+                    <a class="lg:hidden" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="h-6 w-6">
+                            <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+                        </svg>
+                        <span class="sr-only">Home</span></a>
+                    <div class="w-full flex-1">
+                        <form>
+                            <div class="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     class="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.3-4.3"></path>
+                                </svg>
+                                <input class="flex h-10 rounded-md border border-input px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full bg-white shadow-none appearance-none pl-8 md:w-2/3 lg:w-1/3 dark:bg-gray-950"
+                                       placeholder="Search files..." type="search"></div>
+                        </form>
+                    </div>
+                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground rounded-full border border-gray-200 w-8 h-8 dark:border-gray-800"
+                            type="button" id="radix-:r10:" aria-haspopup="menu" aria-expanded="false"
+                            data-state="closed"><img src="/placeholder.svg" width="32" height="32" class="rounded-full"
+                                                     alt="Avatar"
+                                                     style="aspect-ratio: 32 / 32; object-fit: cover;"><span
+                            class="sr-only">Toggle user menu</span></button>
+                </header>
+                <main class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+                    <div class="flex items-center"><h1 class="font-semibold text-lg md:text-2xl">My Documents</h1>
+                        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 ml-auto">
+                            Switch to list view
+                        </button>
+                    </div>
+                    <div class="grid gap-6 md:gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 1</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.2 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 days ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 2</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 2.5 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 1 week ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 3</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 3.8 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 3 days ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                        <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
+                                class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
+                                                                    height="200"
+                                                                    class="aspect-square rounded-md object-cover">
+                            <div class="flex-1 py-4"><h3 class="font-semibold">File 4</h3><small
+                                    class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Size: 1.1 MB
+                            </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
+                                Modified: 2 weeks ago
+                            </small></div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

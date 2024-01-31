@@ -1,4 +1,4 @@
-package me.jovica.notesapp.services
+package me.jovica.notesapp.files
 
 import me.jovica.notesapp.domain.files.FileEntity
 import me.jovica.notesapp.domain.files.FileEntityRepository
@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class NoteService(
+class FileService(
     private val userAccountRepository: UserAccountRepository,
-    private val fileEntityRepository: FileEntityRepository, private val folderEntityRepository: FolderEntityRepository
+    private val fileEntityRepository: FileEntityRepository,
+    private val folderEntityRepository: FolderEntityRepository
 ) {
 
     fun newFile(userName: String): FileEntity {

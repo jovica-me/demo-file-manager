@@ -5,6 +5,7 @@
       xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
 <head>
     <meta charset="UTF-8">
+
     <title th:text="${noteName}"></title>
 
     <link
@@ -18,10 +19,13 @@
 <main>
     <section layout:fragment="content">
         <form method="POST">
+            <!--/*@thymesVar id="noteName" type="java.lang.String"*/-->
             <input type="text" name="noteName" th:value="${noteName}">
             <textarea id="main-editor" ></textarea>
             <input type="hidden" id="noteText" name="noteText" >
+            <!--/*@thymesVar id="noteUUID" type="java.lang.String"*/-->
             <input type="hidden" name="noteUUID" th:value="${noteUUID}" >
+            <!--/*@thymesVar id="noteFolderUUID" type="java.lang.String"*/-->
             <input type="hidden" name="folderUUID" th:value="${noteFolderUUID}" >
             <button hx-post="" hx-swap="outerHTML" >Save</button>
         </form>

@@ -9,85 +9,110 @@
 </head>
 <body>
 <nav layout:fragment="nav" id="nav" hx-post="/ui/update-nav" hx-trigger="update-nav from:body">
-    <div class="">
-        <a class="" href="/">Home</a>
-        <a class="" href="/login">Login</a>
-        <a class="" href="/register">Register</a>
 
-        <div sec:authorize="isAuthenticated()">
-            <a href="/note/new" >
-                New Note
-            </a>
+    <div class="!visible transition-opacity duration-150 !opacity-100">
+        <div class="flex items-center justify-between px-4 py-2 border-b"><a class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"
+            >
+                <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+            </svg>
+            <span class="text-lg font-semibold">Feed</span></a>
 
-            <button hx-get="/logout"> Log out</button>
-        </div>
-        <div sec:authorize="!isAuthenticated()">
+            <nav class="flex gap-4" sec:authorize="isAuthenticated()">
 
-            <button id="nav-login" type="submit" hx-disable>
-                Login
-            </button>
+                <a href="/files"
+                   class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                    Files
+                </a>
 
-            <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js" integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g==" crossorigin="anonymous"></script>
-            <script defer th:inline="javascript">
+                <a href="/files/file/new"
+                   class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                    New Note
+                </a>
+
+                <a th:href="|/p/${#authentication.principal}|"
+                   class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                    Profile
+                </a>
+                <button hx-get="/logout">Log out</button>
+            </nav>
+
+            <nav class="flex gap-4" sec:authorize="!isAuthenticated()">
+                <a href="/register"
+                   class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50">
+                    Register
+                </a>
+                <button class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                        id="nav-login" type="submit" hx-disable>
+                    Login
+                </button>
+
+                <script src="https://unpkg.com/@simplewebauthn/browser@9.0.0/dist/bundle/index.umd.min.js"
+                        integrity="sha512-n27QPQ7eXrOrUrgi0BZTnhqfQjhDt0oliwxpVhHImgPZ77gRE9xA7PIWFTAYw0mX7yA4dPcEiFsjXkKtOH5Q6g=="
+                        crossorigin="anonymous"></script>
+                <script defer th:inline="javascript">
 
 
-                const navLoginButton = document.getElementById("nav-login")
+                    const navLoginButton = document.getElementById("nav-login")
 
-                const ntoken = /*[[${_csrf.token}]]*/ "token"
-                const nheader = /*[[${_csrf.headerName}]]*/ "header"
-                let nhead = {
-                    "Content-Type": "application/json"
-                }
-                nhead[`${nheader}`] = ntoken
+                    const ntoken = /*[[${_csrf.token}]]*/ "token"
+                    const nheader = /*[[${_csrf.headerName}]]*/ "header"
+                    let nhead = {
+                        "Content-Type": "application/json"
+                    }
+                    nhead[`${nheader}`] = ntoken
 
-                navLoginButton.addEventListener("click", nstartLogin)
+                    navLoginButton.addEventListener("click", nstartLogin)
 
-                async function navloginProcess(startConditionalUI = false) {
-                    let username = "";
+                    async function navloginProcess(startConditionalUI = false) {
+                        let username = "";
 
-                    if (startConditionalUI === true) {
-                        username = undefined;
+                        if (startConditionalUI === true) {
+                            username = undefined;
+                        }
+
+                        const data = JSON.stringify({
+                            username
+                        })
+                        try {
+                            const res = await fetch("/api/webauthn/login/start", {
+                                method: "POST",
+                                headers: nhead,
+                                body: data,
+                            })
+                            const startLoginJson = await res.json()
+
+                            delete startLoginJson["extensions"]
+                            delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
+                            console.log(startLoginJson)
+
+                            const value = await SimpleWebAuthnBrowser.startAuthentication(startLoginJson, false)
+                            console.log(value)
+
+                            const finishRes = await fetch("/api/webauthn/login/finish", {
+                                method: "POST",
+                                headers: nhead,
+                                body: JSON.stringify(value),
+                            })
+                            console.log(await finishRes.json())
+                            location.reload()
+                        } catch (e) {
+                            console.log(e)
+                            location.reload()
+                        }
                     }
 
-                    const data = JSON.stringify({
-                        username
-                    })
-                    try {
-                        const res = await fetch("/api/webauthn/login/start", {
-                            method: "POST",
-                            headers: nhead,
-                            body: data,
-                        })
-                        const startLoginJson = await res.json()
-
-                        delete startLoginJson["extensions"]
-                        delete startLoginJson["allowCredentials"]?.[0]?.["transports"]
-                        console.log(startLoginJson)
-
-                        const value = await SimpleWebAuthnBrowser.startAuthentication(startLoginJson, false)
-                        console.log(value)
-
-                        const finishRes = await fetch("/api/webauthn/login/finish", {
-                            method: "POST",
-                            headers: nhead,
-                            body: JSON.stringify(value),
-                        })
-                        console.log(await finishRes.json())
-                        location.reload()
-                    } catch (e) {
-                        console.log(e)
-                        location.reload()
+                    async function nstartLogin(e) {
+                        e.preventDefault()
+                        await navloginProcess();
                     }
-                }
-
-                async function nstartLogin(e) {
-                    e.preventDefault()
-                    await navloginProcess();
-                }
-            </script>
-
+                </script>
+            </nav>
         </div>
     </div>
+
+
 </nav>
 </body>
 </html>

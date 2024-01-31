@@ -51,7 +51,7 @@ class WebAuthnAuthenticationManager(
                     user?.let { it.authorities.map { SimpleGrantedAuthority(it.authority) }.toMutableSet() }
                         ?: mutableSetOf()
 
-                val result = WebAuthnAuthentication(token, assertionResult, auto)
+                val result = WebAuthnAuthentication(token, assertionResult, auto, assertionResult.username)
                 return result
             }
             throw BadCredentialsException("WebAuthn failed")
@@ -101,11 +101,10 @@ class WebAuthnAuthentication(
     val token: WebAuthnAuthenticationRequestToken,
     val assertionResult: AssertionResult,
     val authorities: MutableSet<out GrantedAuthority>,
-    val username: String = token.username
+    val username: String
 ) : AbstractAuthenticationToken(authorities) {
 
     init {
-
         isAuthenticated = true
     }
 
