@@ -62,7 +62,7 @@
                         })
                         const startJSON = await res.json()
 
-                        delete startJSON["extensions"]
+                        startJSON["extensions"] = []
 
                         const value = await startRegistration(startJSON)
                         console.log(value)

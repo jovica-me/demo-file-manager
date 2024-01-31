@@ -1,10 +1,10 @@
 package me.jovica.notesapp.security.user
 
 import com.yubico.webauthn.RegistrationResult
-import me.jovica.notesapp.domain.FolderEntity
-import me.jovica.notesapp.domain.FolderEntityRepository
 import me.jovica.notesapp.domain.UserEntity
 import me.jovica.notesapp.domain.UserEntityRepository
+import me.jovica.notesapp.domain.files.FolderEntity
+import me.jovica.notesapp.domain.files.FolderEntityRepository
 import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
@@ -20,15 +20,14 @@ import java.util.*
 @Service
 class UserService(
     private val userAccountRepository: UserAccountRepository,
-    private val authoritiesEntityRepository: AuthoritiesEntityRepository, private val userEntityRepository: UserEntityRepository,
+    private val authoritiesEntityRepository: AuthoritiesEntityRepository,
+    private val userEntityRepository: UserEntityRepository,
     private val folderEntityRepository: FolderEntityRepository
 ) : UserDetailsService {
 
     fun createUser(username: String?, fullName: String?): UserAccountEntity {
-        if (fullName.isNullOrBlank())
-            throw IllegalArgumentException(" fullName is null or blank")
-        if (username.isNullOrBlank())
-            throw IllegalArgumentException(" username is null or blank")
+        if (fullName.isNullOrBlank()) throw IllegalArgumentException(" fullName is null or blank")
+        if (username.isNullOrBlank()) throw IllegalArgumentException(" username is null or blank")
 
         userAccountRepository.findByUsername(username)
             .apply { if (this != null) throw IllegalStateException("User already exists") }
@@ -50,12 +49,9 @@ class UserService(
             res
         }
 
-
-
-
         var userAccount = UserAccountEntity()
-        var user = UserEntity()
-        var topFolder = FolderEntity()
+        val user = UserEntity()
+        val topFolder = FolderEntity()
 
         userAccount.username = username
         userAccount.fullName = fullName
@@ -65,22 +61,12 @@ class UserService(
 
         userAccount = userAccountRepository.save(userAccount)
 
-
         user.topFolder = topFolder
         topFolder.owner = user
         topFolder.topFolderOfUser = user
         topFolder.name = "Hello from - New folder"
 
         userEntityRepository.save(user)
-
-
-//        topFolder = folderEntityRepository.save(topFolder)
-
-
-
-
-
-
 
         return userAccount
 
@@ -107,7 +93,8 @@ class UserService(
     }
 
     fun findUserByUsername(username: String): UserAccountEntity {
-        val user: UserAccountEntity = userAccountRepository.findByUsername(username)?: throw IllegalStateException("User not found")
+        val user: UserAccountEntity =
+            userAccountRepository.findByUsername(username) ?: throw IllegalStateException("User not found")
         return user
     }
 

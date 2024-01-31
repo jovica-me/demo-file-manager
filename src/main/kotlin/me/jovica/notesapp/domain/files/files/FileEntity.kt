@@ -1,6 +1,7 @@
-package me.jovica.notesapp.domain
+package me.jovica.notesapp.domain.files
 
 import jakarta.persistence.*
+import me.jovica.notesapp.domain.UserEntity
 import org.hibernate.proxy.HibernateProxy
 import java.util.*
 

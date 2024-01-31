@@ -39,10 +39,14 @@ class WebAuthnAuthenticationManager(
         val token = authentication as WebAuthnAuthenticationRequestToken
 
         val assertionResult = loginService.finish(token.startRequest, token.finishRequest)
+
+        token.username = assertionResult.username
+
         try {
             if (assertionResult.isSuccess) {
 
                 val user = userAccountRepository.findByUsername(assertionResult.username)
+
                 val auto: MutableSet<out GrantedAuthority> =
                     user?.let { it.authorities.map { SimpleGrantedAuthority(it.authority) }.toMutableSet() }
                         ?: mutableSetOf()
@@ -58,6 +62,7 @@ class WebAuthnAuthenticationManager(
 }
 
 class WebAuthnAuthenticationConverter(val userService: UserService) : AuthenticationConverter {
+    var logger: Logger = LoggerFactory.getLogger(WebAuthnAuthenticationConverter::class.java)
     override fun convert(request: HttpServletRequest): Authentication {
         val option = request.session.getAttribute(START_LOGIN_REQUEST) as AssertionRequest
         val finishRequest: PublicKeyCredential<AuthenticatorAssertionResponse, ClientAssertionExtensionOutputs>
@@ -66,20 +71,8 @@ class WebAuthnAuthenticationConverter(val userService: UserService) : Authentica
             val jsonBody = request.reader.use { it.readText() }
             finishRequest = jacksonObjectMapper().readValue(jsonBody)
 
-            var userName: String;
-            if(option.username.isEmpty) {
-                    val userUUID = ByteArrayToUUID(finishRequest.response.userHandle
-                        .orElseThrow { throw IllegalStateException("UserHandler error") })
 
-                    val user = userService.findUserById(userUUID)
-                        .orElseThrow { throw IllegalStateException("Username error") }
-
-                userName = user.username
-            } else {
-                userName = option.username.get()
-            }
-
-            return WebAuthnAuthenticationRequestToken(userName, option, finishRequest)
+            return WebAuthnAuthenticationRequestToken(option.username.toString(), option, finishRequest)
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
@@ -88,7 +81,7 @@ class WebAuthnAuthenticationConverter(val userService: UserService) : Authentica
 
 
 class WebAuthnAuthenticationRequestToken(
-    val username: String,
+    var username: String,
     val startRequest: AssertionRequest,
     val finishRequest: PublicKeyCredential<AuthenticatorAssertionResponse, ClientAssertionExtensionOutputs>
 ) : AbstractAuthenticationToken(null) {

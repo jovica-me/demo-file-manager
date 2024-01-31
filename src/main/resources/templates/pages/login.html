@@ -14,7 +14,7 @@
         <form id="login" hx-disable>
             <div>
                 <label for="username">Username</label>
-                <input id="username" type="text" name="username" placeholder="username" autocomplete="username webauthn"/>
+                <input id="username" placeholder="username" />
             </div>
             <button type="submit">
                 Login aaaaaaaaaaaaaaaaaa
@@ -37,26 +37,26 @@
             formEl.addEventListener("submit", startLogin)
 
 
-            SimpleWebAuthnBrowser.browserSupportsWebAuthnAutofill().then(async (supported) => {
-                if (supported) {
-                    console.log('Setting up Conditional UI');
-                    try {
-                        await loginProcess(true);
-                    } catch (err) {
-                        if (err.name === 'AbortError') {
-                            console.log('Conditional UI request was aborted');
-                        } else {
-                            console.error('Conditional UI error:', err);
-                        }
-                    }
-                }
-            });
+            // SimpleWebAuthnBrowser.browserSupportsWebAuthnAutofill().then(async (supported) => {
+            //     if (supported) {
+            //         console.log('Setting up Conditional UI');
+            //         try {
+            //             await loginProcess(true);
+            //         } catch (err) {
+            //             if (err.name === 'AbortError') {
+            //                 console.log('Conditional UI request was aborted');
+            //             } else {
+            //                 console.error('Conditional UI error:', err);
+            //             }
+            //         }
+            //     }
+            // });
 
 
             async function loginProcess(startConditionalUI = false) {
                 let username = usernameEl.value;
 
-                if (startConditionalUI === true) {
+                if (startConditionalUI === true ) {
                     username = undefined;
                 }
 
@@ -87,7 +87,7 @@
                     if(fine.good === "good") {
                         window.location="/"
                     } else {
-                        window.location="/login?error=error"
+                        // window.location="/login?error=error"
                     }
                 } catch (e) {
                     console.log(e)

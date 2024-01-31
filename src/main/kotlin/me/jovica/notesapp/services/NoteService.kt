@@ -1,9 +1,9 @@
 package me.jovica.notesapp.services
 
-import me.jovica.notesapp.domain.FileEntity
-import me.jovica.notesapp.domain.FileEntityRepository
-import me.jovica.notesapp.domain.FolderEntity
-import me.jovica.notesapp.domain.FolderEntityRepository
+import me.jovica.notesapp.domain.files.FileEntity
+import me.jovica.notesapp.domain.files.FileEntityRepository
+import me.jovica.notesapp.domain.files.FolderEntity
+import me.jovica.notesapp.domain.files.FolderEntityRepository
 import me.jovica.notesapp.security.user.UserAccountEntity
 import me.jovica.notesapp.security.user.UserAccountRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException

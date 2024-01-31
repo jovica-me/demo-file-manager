@@ -6,6 +6,7 @@ import com.yubico.webauthn.StartRegistrationOptions
 import com.yubico.webauthn.data.*
 import me.jovica.notesapp.security.user.UserAccountRepository
 import me.jovica.notesapp.security.user.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +17,7 @@ class RegistrationService(
     val relyingParty: RelyingParty,
     val userAccountRepository: UserAccountRepository
 ) {
+    var logger = LoggerFactory.getLogger(RegistrationService::class.java);
     @Transactional(propagation = Propagation.REQUIRED)
     fun start(request: RegistrationStartRequest): PublicKeyCredentialCreationOptions {
         val user = userService.createUser(request.username, request.fullName)
@@ -31,6 +33,7 @@ class RegistrationService(
             AuthenticatorSelectionCriteria.builder()
                 .residentKey(ResidentKeyRequirement.PREFERRED)
                 .userVerification(UserVerificationRequirement.PREFERRED)
+                .authenticatorAttachment(AuthenticatorAttachment.CROSS_PLATFORM)
                 .build()
 
         val startRegistrationOptions =

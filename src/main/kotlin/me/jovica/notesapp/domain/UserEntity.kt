@@ -1,6 +1,8 @@
 package me.jovica.notesapp.domain
 
 import jakarta.persistence.*
+import me.jovica.notesapp.domain.files.FileEntity
+import me.jovica.notesapp.domain.files.FolderEntity
 import me.jovica.notesapp.security.user.UserAccountEntity
 import java.util.*
 

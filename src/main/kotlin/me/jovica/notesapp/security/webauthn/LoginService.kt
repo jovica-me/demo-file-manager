@@ -1,6 +1,7 @@
 package me.jovica.notesapp.security.webauthn
 
 import com.yubico.webauthn.*
+import com.yubico.webauthn.data.AssertionExtensionInputs
 import com.yubico.webauthn.data.AuthenticatorAssertionResponse
 import com.yubico.webauthn.data.ClientAssertionExtensionOutputs
 import com.yubico.webauthn.data.PublicKeyCredential
@@ -15,7 +16,7 @@ class LoginService(val relyingParty: RelyingParty) {
     fun start(request: LogInStartRequest): AssertionRequest {
         val o = StartAssertionOptions.builder()
             .timeout(60000)
-            .userVerification(UserVerificationRequirement.PREFERRED);
+            .userVerification(UserVerificationRequirement.PREFERRED)
         if(!request.username.isNullOrBlank()) {
             o.username(request.username)
         }
