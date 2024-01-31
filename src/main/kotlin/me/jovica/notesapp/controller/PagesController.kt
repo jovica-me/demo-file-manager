@@ -9,4 +9,10 @@ class PagesController {
     fun home ():String {
         return "pages/index"
     }
+
+    @GetMapping("/test")
+    fun test(): String {
+
+        return "pages/files/folder"
+    }
 }
