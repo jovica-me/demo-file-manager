@@ -21,11 +21,10 @@ open class FolderEntity {
     open var owner: UserEntity? = null
 
     @Column(name = "parent_folder_id", insertable = false, updatable = false)
-    private var parentFolderId: UUID? = null
+    open var parentFolderId: UUID? = null
 
     @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    @JoinColumn(name = "parent_folder_id")
-    private val childrenFolders: Set<FolderEntity>? = null
+    open val childrenFolders: MutableList<FolderEntity> = mutableListOf()
 
 
     @OneToMany(mappedBy = "folderEntity", orphanRemoval = true)

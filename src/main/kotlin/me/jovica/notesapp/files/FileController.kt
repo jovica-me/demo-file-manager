@@ -1,6 +1,7 @@
 package me.jovica.notesapp.files
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
+import me.jovica.notesapp.domain.files.FolderEntity
 import me.jovica.notesapp.security.webauthn.WebAuthnAuthentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
@@ -58,5 +59,7 @@ class FileController(
 
 
     }
+
+
 
 }

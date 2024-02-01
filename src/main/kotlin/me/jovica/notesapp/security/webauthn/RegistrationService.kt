@@ -33,7 +33,6 @@ class RegistrationService(
             AuthenticatorSelectionCriteria.builder()
                 .residentKey(ResidentKeyRequirement.PREFERRED)
                 .userVerification(UserVerificationRequirement.PREFERRED)
-                .authenticatorAttachment(AuthenticatorAttachment.CROSS_PLATFORM)
                 .build()
 
         val startRegistrationOptions =

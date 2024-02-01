@@ -1,41 +1,32 @@
 <!DOCTYPE html >
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/files/folder/template.html}"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout"
+>
 <head>
     <meta charset="UTF-8">
-    <!--/*@thymesVar id="folderName" type="java.lang.String"*/-->
-    <title th:text="${folderName}"></title>
+
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <title th:text="${title}"></title>
 </head>
 <body>
     <main layout:fragment="contente" class="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6" >
         <div class="flex items-center">
-            <h1 class="font-semibold text-lg md:text-2xl" th:text="${folderName}">My Documents</h1>
+            <h1 class="font-semibold text-lg md:text-2xl" th:text="${title}">My Documents</h1>
+
+
+            <!--/*@thymesVar id="currentFolder" type="me.jovica.notesapp.domain.files.FolderEntity"*/-->
+            <form th:if="${currentFolder != null}" hx-post="/files/new">
+                <input id="parentUUID" name="parentUUID" type="hidden" th:value="${currentFolder.getId()}">
+                <input id="title" name="title" type="text" >
+                <button type="submit">Submit</button>
+            </form>
         </div>
         <div class="grid gap-6 md:gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            <div class="relative group"><a class="absolute inset-0 z-10" href="#"><span
-                    class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
-                                                        height="200"
-                                                        class="aspect-square rounded-md object-cover">
-                <div class="flex-1 py-4"><h3 class="font-semibold">File 1</h3><small
-                        class="text-sm leading-none text-gray-500 dark:text-gray-400">
-                    Size: 1.2 MB
-                </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">Modified: 2 days
-                    ago</small></div>
-            </div>
-            <div class="relative group">
-
-                <a class="absolute inset-0 z-10" href="#"><span
-                        class="sr-only">View</span></a><img src="/placeholder.svg" alt="Cover image" width="200"
-                                                            height="200"
-                                                            class="aspect-square rounded-md object-cover">
-                <div class="flex-1 py-4"><h3 class="font-semibold">File 2</h3><small
-                        class="text-sm leading-none text-gray-500 dark:text-gray-400">
-                    Size: 2.5 MB
-                </small><small class="text-sm leading-none text-gray-500 dark:text-gray-400">
-                    Modified: 1 week ago
-                </small></div>
+            <!--/*@thymesVar id="folder" type="me.jovica.notesapp.domain.files.FolderEntity"*/-->
+            <div layout:replace="~{fragments/files/folder/folders}" >
             </div>
         </div>
     </main>
