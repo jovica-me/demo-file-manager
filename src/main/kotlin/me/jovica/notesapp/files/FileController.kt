@@ -1,9 +1,6 @@
 package me.jovica.notesapp.files
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
-import me.jovica.notesapp.domain.files.FolderEntity
-import me.jovica.notesapp.security.webauthn.WebAuthnAuthentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,8 +27,7 @@ class FileController(
 
     @GetMapping("/new")
     fun redirectNewFile(): String {
-        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        val file = fileService.newFile(auth.username);
+        val file = fileService.newFile();
         return "redirect:/files/file/" + file.id;
     }
 

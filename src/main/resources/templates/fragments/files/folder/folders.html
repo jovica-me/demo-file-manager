@@ -1,7 +1,0 @@
-<!--/*@thymesVar id="foldersToShow" type="java.util.List<me.jovica.notesapp.domain.files.FolderEntity>"*/-->
-<a th:each="folder: ${foldersToShow}" hx-trigger="refreshFolders from:body" th:href="|/files/${folder.getId()}|">
-    <span th:text="${folder.getName()}"></span>
-    <img src="/placeholder.svg" alt="Cover image" width="200"
-         height="200"
-         class="aspect-square rounded-md object-cover">
-</a>

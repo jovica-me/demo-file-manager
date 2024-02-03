@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta name="view-transition" content="same-origin" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
     <script>
         tailwind.config = {
@@ -131,6 +131,13 @@
                 --ring: 240 4.9% 83.9%;
             }
         }
+        @layer utilities {
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 0.5s;
+            }
+
+        }
     </style>
 
     <script src="https://unpkg.com/htmx.org@1.9.10"
@@ -164,7 +171,7 @@
         <div class="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
             <div class="flex h-full max-h-screen flex-col gap-2">
                 <div class="flex h-[60px] items-center border-b px-6"><a
-                        class="flex items-center gap-2 font-semibold" href="#">
+                        class="flex items-center gap-2 font-semibold" href="/files/">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="h-6 w-6">

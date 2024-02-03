@@ -2,6 +2,7 @@ package me.jovica.notesapp.domain.files
 
 import jakarta.persistence.*
 import me.jovica.notesapp.domain.UserEntity
+import me.jovica.notesapp.files.domain.FolderPermissionsEntity
 import java.util.*
 
 
@@ -20,11 +21,12 @@ open class FolderEntity {
     @JoinColumn(name = "owner_user_id", nullable = false)
     open var owner: UserEntity? = null
 
-    @Column(name = "parent_folder_id", insertable = false, updatable = false)
-    open var parentFolderId: UUID? = null
+    @ManyToOne
+    @JoinColumn(name = "parent_folder_id")
+    open var parentFolder: FolderEntity? = null
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    open val childrenFolders: MutableList<FolderEntity> = mutableListOf()
+    @OneToMany(mappedBy = "parentFolder")
+    open var childrenFolders: MutableList<FolderEntity> = mutableListOf()
 
 
     @OneToMany(mappedBy = "folderEntity", orphanRemoval = true)
@@ -33,4 +35,9 @@ open class FolderEntity {
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "top_folder_of_user_id", unique = true)
     open var topFolderOfUser: UserEntity? = null
+
+    @OneToMany(mappedBy = "folderEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
+    open var folderPermissionsEntities: MutableSet<FolderPermissionsEntity> = mutableSetOf()
+
+
 }

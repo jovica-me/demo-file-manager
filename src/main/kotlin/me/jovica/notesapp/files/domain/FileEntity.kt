@@ -24,7 +24,7 @@ open class FileEntity {
     open var folderEntity: FolderEntity? = null
 
 
-    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "owner_user_id", nullable = false)
     open var owner: UserEntity? = null
 

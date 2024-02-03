@@ -3,6 +3,7 @@ package me.jovica.notesapp.domain
 import jakarta.persistence.*
 import me.jovica.notesapp.domain.files.FileEntity
 import me.jovica.notesapp.domain.files.FolderEntity
+import me.jovica.notesapp.files.domain.FolderPermissionsEntity
 import me.jovica.notesapp.security.user.UserAccountEntity
 import java.util.*
 
@@ -30,8 +31,10 @@ open class UserEntity {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "owner", orphanRemoval = true)
     open var files: MutableSet<FileEntity> = mutableSetOf()
 
+
     @OneToMany(mappedBy = "owner", orphanRemoval = true)
-    open var publishedPages: MutableSet<PublishedPageEntity> = mutableSetOf()
+    open var publishedPageEntities: MutableSet<PublishedPageEntity> = mutableSetOf()
 
-
+    @OneToMany(mappedBy = "userEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
+    open var folderPermissionsEntities: MutableSet<FolderPermissionsEntity> = mutableSetOf()
 }

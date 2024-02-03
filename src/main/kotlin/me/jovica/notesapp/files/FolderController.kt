@@ -8,10 +8,7 @@ import me.jovica.notesapp.security.webauthn.WebAuthnAuthentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @Controller
@@ -19,7 +16,8 @@ import java.util.*
 class FolderController(
     private val userAccountRepository: UserAccountRepository,
     private val folderEntityRepository: FolderEntityRepository,
-    private val folderService: FolderService
+    private val folderService: FolderService,
+    private val fileService: FileService
 ) {
 
     @GetMapping("")
@@ -46,47 +44,89 @@ class FolderController(
         return "redirect:/files/" + user.userEntity?.topFolder?.id
     }
 
-    @GetMapping("/refreshFolders")
-    fun refreshFolders() {
-
-    }
-
 
     @GetMapping("/{id}")
     fun pageFolder(@PathVariable("id") folderUUID: UUID, model: Model): String {
         val folder = folderEntityRepository.findById(folderUUID)
             .orElseThrow { throw IllegalStateException("File dose not exist") }
 
-        if(!folderService.hasAccsesToFolder(folder)){
+        val (hasAccess, isOwner)= folderService.hasAccsesToFolder(folder)
+
+        if(!hasAccess){
             return "redirect:/files/"
         }
 
-        model.addAttribute("foldersToShow", folder.childrenFolders)
         model.addAttribute("title", folder.name)
-        model.addAttribute("currentFolder", folder)
-        return "pages/files/folder"
+
+        model.addAttribute("foldersToShow", folder.childrenFolders)
+        model.addAttribute("filesToShow", folder.fileEntities)
+
+        if(isOwner) {
+            model.addAttribute("isOwner",isOwner)
+            model.addAttribute("folderUUID", folder.id )
+        }
+
+        return "pages/files/usersFolder"
     }
 
-//    @GetMapping("/shared-with-me")
-//    fun pageSharedWithMe( model: Model): String {
-//        val list: MutableList<FolderEntity> =  folderService.getAllShredWithMe();
-//
-//        model.addAttribute("foldersToShow", list)
-//        model.addAttribute("title", "Shared with me")
-//       model.addAttribute("currentFolder", folder)
-//        return "pages/files/folder"
-//    }
-
+    // New folder -> contentChanged
     @HxRequest
     @HxRefresh
     @PostMapping("/new")
-    fun newFolder(parentUUID: UUID, title: String):String {
-        // TODO CHKECK IF HE CAN DO IT
-
+    fun postNewFolder(parentUUID: UUID, title: String): String {
         folderService.createFolder(parentUUID, title);
+        return "fragments/ok"
+    }
+    // Folder Delete -> contentChanged
+    @HxRequest
+    @HxRefresh
+    @DeleteMapping("/delete")
+    fun deleteFolder(folderUUID: UUID):String {
+        folderService.deleteFolder(folderUUID)
+        return "fragments/ok"
+    }
+
+    // Add File -> contentChanged
+    @HxRequest
+    @HxRefresh
+    @PostMapping("/newfile")
+    fun postNewFile(folderUUID: UUID): String {
+        fileService.newFile(folderUUID)
+        return "fragments/ok"
+    }
+
+    //Delete File -> contentChanged
+    @HxRequest
+    @HxRefresh
+    @DeleteMapping("/deletefile")
+    fun deleteFile(fileUUID: UUID): String {
+        fileService.deleteFile(fileUUID)
+        return "fragments/ok"
+    }
 
 
-        return "pages/files/folder"
+
+
+
+
+    // add Permission -> permissionChanged
+
+    // change Permission -> permissionChanged
+
+    // delete Permission -> permissionChanged
+
+//    @PostMapping("/addPermission")
+//    fun postNewPermissions(folderUUID: UUID, username: String, canWrite:Boolean):String {
+//
+//    }
+
+        @GetMapping("/shared-with-me")
+    fun pageSharedWithMe( model: Model): String {
+        val list =  folderService.getAllShredWithMe();
+
+        model.addAttribute("foldersToShow", list)
+        model.addAttribute("title", "Shared with me")
+        return "usersFolder"
     }
 
 }

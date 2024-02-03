@@ -6,6 +6,7 @@ import me.jovica.notesapp.domain.UserEntityRepository
 import me.jovica.notesapp.domain.files.FolderEntity
 import me.jovica.notesapp.domain.files.FolderEntityRepository
 import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntity
+import me.jovica.notesapp.security.webauthn.WebAuthnCredentialEntityRepository
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -22,7 +23,7 @@ class UserService(
     private val userAccountRepository: UserAccountRepository,
     private val authoritiesEntityRepository: AuthoritiesEntityRepository,
     private val userEntityRepository: UserEntityRepository,
-    private val folderEntityRepository: FolderEntityRepository
+    private val folderEntityRepository: FolderEntityRepository, private val webAuthnCredentialEntityRepository: WebAuthnCredentialEntityRepository
 ) : UserDetailsService {
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -101,7 +102,8 @@ class UserService(
 
 
     fun findCredentialById(credentialId: String?): Optional<WebAuthnCredentialEntity> {
-        return Optional.empty()
+        if(credentialId.isNullOrBlank()) throw IllegalStateException("Bad String")
+        return webAuthnCredentialEntityRepository.findById(credentialId)
     }
 
     override fun loadUserByUsername(username: String): UserDetails {

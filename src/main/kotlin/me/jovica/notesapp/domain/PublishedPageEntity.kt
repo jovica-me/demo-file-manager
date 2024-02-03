@@ -10,16 +10,16 @@ open class PublishedPageEntity {
     @Column(name = "id", nullable = false)
     open var id: UUID? = null
 
-    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "owner_user_id", nullable = false)
-    open var owner: UserEntity? = null
-
-    @Column(name = "description", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "description")
     open var description: String? = null
 
-    @Column(name = "title", nullable = false)
+    @Column(name = "title")
     open var title: String? = null
 
-    @Column(name = "content", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "content")
     open var content: String? = null
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    open var owner: UserEntity? = null
 }

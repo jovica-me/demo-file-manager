@@ -14,6 +14,6 @@ class PagesController(private val folderEntityRepository: FolderEntityRepository
     @GetMapping("/test")
     fun test(): String {
 //        folderEntityRepository.findById("")
-        return "pages/files/folder"
+        return "usersFolder"
     }
 }

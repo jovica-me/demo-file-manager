@@ -1,0 +1,41 @@
+<!--/*@thymesVar id="foldersToShow" type="java.util.List<me.jovica.notesapp.domain.files.FolderEntity>"*/-->
+<div th:each="folder: ${foldersToShow}" >
+    <a th:href="|/files/${folder.getId()}|">
+        <span th:text="${folder.getName()}"></span>
+        <img src="/folder.svg" alt="Cover image" width="200"
+             height="200"
+             class="aspect-square rounded-md object-cover">
+    </a>
+    <form>
+        <input type="hidden"  name="folderUUID" th:value="${folder.getId()}">
+        <!--/*@thymesVar id="isOwner" type="java.lang.Boolean"*/-->
+        <button th:if="${isOwner}"
+                th:hx-delete="|/files/delete|"
+                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+            Delete
+        </button>
+    </form>
+
+</div>
+<!--/*@thymesVar id="filesToShow" type="java.util.List<me.jovica.notesapp.domain.files.FileEntity>"*/-->
+<div th:each="file: ${filesToShow}" th:hx-vals="'{\'fileUUID\': \'' +${file.getId()}+ '\'}' ">
+    <a th:href="|/files/file/${file.getId()}|">
+        <span th:text="${file.getName()}"></span>
+        <img src="/file.svg" alt="Cover image" width="200"
+             height="200"
+             class="aspect-square rounded-md object-cover">
+    </a>
+
+    <form>
+        <input type="hidden"  name="fileUUID" th:value="${file.getId()}">
+        <!--/*@thymesVar id="isOwner" type="java.lang.Boolean"*/-->
+        <button th:if="${isOwner}"
+                th:hx-delete="|/files/deletefile|"
+
+                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+            Delete
+        </button>
+    </form>
+
+</div>
+

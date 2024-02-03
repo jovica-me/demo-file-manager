@@ -27,6 +27,7 @@ import org.springframework.security.web.authentication.AuthenticationConverter
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Service
 import java.io.IOException
+import java.util.*
 
 
 @Service
@@ -46,12 +47,13 @@ class WebAuthnAuthenticationManager(
             if (assertionResult.isSuccess) {
 
                 val user = userAccountRepository.findByUsername(assertionResult.username)
+                    ?: throw BadCredentialsException("User not found")
 
                 val auto: MutableSet<out GrantedAuthority> =
-                    user?.let { it.authorities.map { SimpleGrantedAuthority(it.authority) }.toMutableSet() }
-                        ?: mutableSetOf()
+                    user.let { it.authorities.map { SimpleGrantedAuthority(it.authority) }.toMutableSet() }
 
-                val result = WebAuthnAuthentication(token, assertionResult, auto, assertionResult.username)
+
+                val result = WebAuthnAuthentication(token, assertionResult, auto, assertionResult.username,user.id!!)
                 return result
             }
             throw BadCredentialsException("WebAuthn failed")
@@ -101,7 +103,8 @@ class WebAuthnAuthentication(
     val token: WebAuthnAuthenticationRequestToken,
     val assertionResult: AssertionResult,
     val authorities: MutableSet<out GrantedAuthority>,
-    val username: String
+    val username: String,
+    val id: UUID
 ) : AbstractAuthenticationToken(authorities) {
 
     init {
