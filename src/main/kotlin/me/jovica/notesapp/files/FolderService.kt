@@ -76,8 +76,7 @@ class FolderService(
     @Transactional(propagation = Propagation.REQUIRED)
     fun deleteFolder(folderUUID: UUID) {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        var folder =
-            folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
+        var folder = folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
         if (folder.owner?.userAccount?.username != auth.username) {
             throw IllegalStateException("User can not change promotions if he is not the owner")
         }
@@ -91,12 +90,17 @@ class FolderService(
         for (subFolder in subFoldersCopy) {
             deleteFolderRecursively(subFolder)
         }
-        
+
         folder.parentFolder?.childrenFolders?.remove(folder)
 
         val filesCopy = ArrayList(folder.fileEntities)
         for(file in filesCopy) {
             file.folderEntity?.fileEntities?.remove(file);
+            val fileAccCopy = ArrayList(file.hasAccess)
+            for (acc in fileAccCopy) {
+                acc.accessFiles.remove(file)
+                file.hasAccess.remove(acc)
+            }
             fileEntityRepository.delete(file)
         }
 

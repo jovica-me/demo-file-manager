@@ -38,5 +38,11 @@ open class UserEntity {
     @OneToMany(mappedBy = "userEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
     open var folderPermissionsEntities: MutableSet<FolderPermissionsEntity> = mutableSetOf()
 
-
+    @ManyToMany(fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH])
+    @JoinTable(
+        name = "user_entity_file_entities",
+        joinColumns = [JoinColumn(name = "user_entity_id")],
+        inverseJoinColumns = [JoinColumn(name = "file_entities_id")]
+    )
+    open var accessFiles: MutableSet<FileEntity> = mutableSetOf()
 }

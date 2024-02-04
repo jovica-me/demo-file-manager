@@ -1,0 +1,72 @@
+<div id="control" class="w-full max-w-7xl p-4" xmlns="http://www.w3.org/1999/html">
+    <div class="flex flex-col gap-6">
+
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="flex flex-col space-y-1.5 px-6 pt-6">
+                <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Manage Users</h3>
+                <p class="text-sm text-muted-foreground">Manage accses to this folder</p></div>
+            <div class="p-6">
+                <div class="relative w-full overflow-auto">
+                    <table class="w-full caption-bottom text-sm">
+                        <thead class="[&amp;_tr]:border-b">
+                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground ">
+                                Name
+                            </th>
+                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground ">
+
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="[&amp;_tr:last-child]:border-0">
+
+                        <!--/*@thymesVar id="file" type="me.jovica.notesapp.domain.files.FileEntity"*/-->
+                        <tr th:each="per: ${file.getHasAccess()}"
+                            class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                        >
+                            <td th:text="${per.userAccount.getFullName()}" class="p-4 align-middle">
+                                Jane Doe
+                            </td>
+                            <td class="p-4 align-middle ">
+                                <div class="flex items-center gap-2">
+                                    <form>
+                                        <input type="hidden" name="userUUID" th:value="${per.getId()}">
+                                        <input type="hidden" name="fileUUID" th:value="${file.getId()}">
+
+                                        <button hx-delete="/files/file/removepermision"
+                                                hx-target="#control"
+                                                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="flex flex-col space-y-1.5 px-6 pt-6">
+                <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Add user </h3>
+                <p class="text-sm text-muted-foreground">Give accses to this folder</p></div>
+            <div class="p-6">
+                <form class="grid gap-4">
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                               for="username">Username</label>
+                        <input class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                               name="username" id="username" placeholder="Enter user name">
+                    </div>
+                    <!--/*@thymesVar id="file" type="me.jovica.notesapp.domain.files.FileEntity"*/-->
+                    <input type="hidden" name="fileUUID" th:value="${file.getId()}"/>
+                    <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                            hx-post="/files/file/addpermission"
+                            hx-target="#control"
+                            type="submit">Add User
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

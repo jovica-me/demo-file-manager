@@ -19,8 +19,7 @@ open class FileEntity {
     @Column(name = "text")
     open var text: String? = null
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "folder_entity_id", nullable = false)
+    @ManyToOne(cascade = [CascadeType.ALL], optional = false)
     open var folderEntity: FolderEntity? = null
 
 
@@ -28,6 +27,9 @@ open class FileEntity {
     @JoinColumn(name = "owner_user_id", nullable = false)
     open var owner: UserEntity? = null
 
+
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "accessFiles", cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH])
+    open var hasAccess: MutableSet<UserEntity> = mutableSetOf()
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true

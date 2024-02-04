@@ -3,10 +3,7 @@ package me.jovica.notesapp.files
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 
@@ -18,10 +15,9 @@ class FileController(
     @GetMapping("/{id}")
     fun pageFile(@PathVariable("id") noteUUID: UUID, model: Model): String {
         val file = fileService.getFile(noteUUID);
-        model.addAttribute("noteUUID", file.id)
-        model.addAttribute("noteName", file.name)
-        model.addAttribute("noteText", file.text)
-        model.addAttribute("noteFolderUUID", file.folderEntity?.id)
+        file.text
+        model.addAttribute("file",file)
+        model.addAttribute("isOwner",true)
         return "pages/files/note"
     }
 
@@ -39,6 +35,24 @@ class FileController(
             return "fragments/files/notes/failedtosave"
         }
         return "fragments/files/notes/saved"
+    }
+
+    @HxRequest
+    @PostMapping("/addpermission")
+    fun postAddPermission(fileUUID: UUID,username: String,model: Model): String {
+        val file = fileService.addPermission(fileUUID,username);
+        model.addAttribute("file",file)
+
+        return "fragments/files/notes/control"
+    }
+
+    @HxRequest
+    @DeleteMapping("/removepermision")
+    fun postAddPermission(fileUUID: UUID,userUUID: UUID,model: Model): String {
+        val file = fileService.removePermission(fileUUID,userUUID);
+        model.addAttribute("file",file)
+
+        return "fragments/files/notes/control"
     }
 
 

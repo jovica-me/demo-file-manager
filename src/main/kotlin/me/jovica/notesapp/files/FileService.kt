@@ -22,14 +22,18 @@ class FileService(
     fun newFile(): FileEntity {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
 
-        val user = userEntityRepository.findById(auth.id).orElseThrow{ throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji")}
+        val user = userEntityRepository.findById(auth.id)
+            .orElseThrow { throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji") }
 
         return newFile(user.topFolder!!, user)
     }
+
     fun newFile(folderUUID: UUID) {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        val user = userEntityRepository.findById(auth.id).orElseThrow{ throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji")}
-        val folder = folderEntityRepository.findById(folderUUID).orElseThrow{ throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji")}
+        val user = userEntityRepository.findById(auth.id)
+            .orElseThrow { throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji") }
+        val folder = folderEntityRepository.findById(folderUUID)
+            .orElseThrow { throw IllegalStateException("Nemoguce uraditi, korisnik ne postoji") }
 
         newFile(folder, user)
     }
@@ -51,13 +55,44 @@ class FileService(
     }
 
     fun deleteFile(fileUUID: UUID) {
-        val file =  fileEntityRepository.findById(fileUUID).orElseThrow{ throw IllegalStateException("File dose not exist") }
-        val owner = file.owner?: throw IllegalStateException("File dose not exist")
+        val file =
+            fileEntityRepository.findById(fileUUID).orElseThrow { throw IllegalStateException("File dose not exist") }
+        val hasAccesCopy = ArrayList(file.hasAccess)
+        for (acc in hasAccesCopy) {
+            acc.accessFiles.remove(file)
+        }
+        file.folderEntity?.fileEntities?.remove(file);
+        file.owner?.files?.remove(file);
         fileEntityRepository.delete(file)
-
     }
 
+    fun hasAccses(fileUUID: UUID): Pair<FileEntity, WebAuthnAuthentication> {
+        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
+        val folder =
+            fileEntityRepository.findById(fileUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
+        if (folder.owner?.userAccount?.username != auth.username) {
+            throw IllegalStateException("User can not change promotions if he is not the owner")
+        }
+        return Pair(folder, auth)
+    }
 
+    fun addPermission(fileUUID: UUID, username: String): FileEntity {
+        val (file, auth) = hasAccses(fileUUID);
+        val user = userEntityRepository.findByUserAccount_Username(username)
+            .orElseThrow { throw IllegalStateException("User doses not existe") }
+        file.hasAccess.add(user)
+        user.accessFiles.add(file)
+        return fileEntityRepository.saveAndFlush(file)
+    }
+
+    fun removePermission(fileUUID: UUID, userUUID: UUID): FileEntity {
+        val (file, auth) = hasAccses(fileUUID);
+        val user =
+            userEntityRepository.findById(userUUID).orElseThrow { throw IllegalStateException("User doses not existe") }
+        file.hasAccess.remove(user)
+        user.accessFiles.remove(file)
+        return fileEntityRepository.save(file)
+    }
 
 
 }
