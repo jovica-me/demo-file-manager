@@ -1,7 +1,9 @@
 package me.jovica.notesapp.domain.files;
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 interface FolderEntityRepository : JpaRepository<FolderEntity, UUID> {
@@ -19,4 +21,10 @@ interface FolderEntityRepository : JpaRepository<FolderEntity, UUID> {
 where folderPermissionsEntities.userEntity.id = ?1"""
     )
     fun findByFolderPermissionsEntities_UserEntity_Id(id: UUID): List<FolderEntity>
+
+
+    @Transactional
+    @Modifying
+    @Query("delete from FolderEntity f where f.id = ?1")
+    fun deleteIntById(id: UUID): Int
 }

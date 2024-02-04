@@ -21,15 +21,16 @@ open class FolderEntity {
     @JoinColumn(name = "owner_user_id", nullable = false)
     open var owner: UserEntity? = null
 
+
     @ManyToOne
-    @JoinColumn(name = "parent_folder_id")
+    @JoinColumn(name = "parent_folder_id",)
     open var parentFolder: FolderEntity? = null
 
-    @OneToMany(mappedBy = "parentFolder")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parentFolder", cascade = [CascadeType.ALL])
     open var childrenFolders: MutableList<FolderEntity> = mutableListOf()
 
 
-    @OneToMany(mappedBy = "folderEntity", orphanRemoval = true)
+    @OneToMany(mappedBy = "folderEntity",cascade = [CascadeType.ALL])
     open var fileEntities: MutableSet<FileEntity> = mutableSetOf()
 
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)

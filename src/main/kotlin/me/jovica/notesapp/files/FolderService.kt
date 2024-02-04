@@ -1,6 +1,7 @@
 package me.jovica.notesapp.files
 
 import me.jovica.notesapp.domain.UserEntityRepository
+import me.jovica.notesapp.domain.files.FileEntityRepository
 import me.jovica.notesapp.domain.files.FolderEntity
 import me.jovica.notesapp.domain.files.FolderEntityRepository
 import me.jovica.notesapp.files.domain.FolderPermissionsEntity
@@ -16,7 +17,7 @@ import java.util.*
 class FolderService(
     private val folderEntityRepository: FolderEntityRepository,
     private val folderPermissionsEntityRepository: FolderPermissionsEntityRepository,
-    private val userEntityRepository: UserEntityRepository
+    private val userEntityRepository: UserEntityRepository, private val fileEntityRepository: FileEntityRepository
 ) {
     private fun checkForPermission(folderUUID: UUID): Pair<FolderEntity, WebAuthnAuthentication> {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
@@ -72,17 +73,34 @@ class FolderService(
     }
 
 
+    @Transactional(propagation = Propagation.REQUIRED)
     fun deleteFolder(folderUUID: UUID) {
-        val (folder, auth) = checkForPermission(folderUUID)
-
-
-//        val parent = folder.parentFolder?: throw IllegalArgumentException("Invalid folder")
-//        parent.childrenFolders.remove(folder);
-//        folderEntityRepository.save(parent)
-//        folder.parentFolder = null;
-//        folderEntityRepository.saveAndFlush(folder)
+        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
+        var folder =
+            folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
+        if (folder.owner?.userAccount?.username != auth.username) {
+            throw IllegalStateException("User can not change promotions if he is not the owner")
+        }
+        deleteFolderRecursively(folder)
+        folder.parentFolder?.childrenFolders?.remove(folder)
         folderEntityRepository.delete(folder);
+    }
 
+    private fun deleteFolderRecursively(folder: FolderEntity) {
+        val subFoldersCopy = ArrayList(folder.childrenFolders)
+        for (subFolder in subFoldersCopy) {
+            deleteFolderRecursively(subFolder)
+        }
+        
+        folder.parentFolder?.childrenFolders?.remove(folder)
+
+        val filesCopy = ArrayList(folder.fileEntities)
+        for(file in filesCopy) {
+            file.folderEntity?.fileEntities?.remove(file);
+            fileEntityRepository.delete(file)
+        }
+
+        folderEntityRepository.delete(folder)
     }
 
     fun addPermission(folderUUID: UUID, username: String) {
