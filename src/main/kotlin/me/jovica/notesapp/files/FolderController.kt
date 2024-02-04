@@ -47,12 +47,10 @@ class FolderController(
 
     @GetMapping("/{id}")
     fun pageFolder(@PathVariable("id") folderUUID: UUID, model: Model): String {
-        val folder = folderEntityRepository.findById(folderUUID)
-            .orElseThrow { throw IllegalStateException("File dose not exist") }
 
-        val (hasAccess, isOwner)= folderService.hasAccsesToFolder(folder)
+        val (folder,hasAccess, isOwner) = folderService.hasAccsesToFolder(folderUUID)
 
-        if(!hasAccess){
+        if (!hasAccess) {
             return "redirect:/files/"
         }
 
@@ -61,13 +59,23 @@ class FolderController(
         model.addAttribute("foldersToShow", folder.childrenFolders)
         model.addAttribute("filesToShow", folder.fileEntities)
 
-        if(isOwner) {
-            model.addAttribute("isOwner",isOwner)
-            model.addAttribute("folderUUID", folder.id )
+        if (isOwner) {
+            model.addAttribute("isOwner", isOwner)
+            model.addAttribute("folderUUID", folder.id)
+            model.addAttribute("folderPermisions", folder.folderPermissionsEntities)
         }
 
         return "pages/files/usersFolder"
     }
+
+
+//    @HxRequest
+//    @HxRefresh
+//    @PostMapping("/new")
+//    fun postStar(folderUUID: UUID): String {
+//        folderService.star(folderUUID)
+//        return "fragments/ok"
+//    }
 
     // New folder -> contentChanged
     @HxRequest
@@ -77,11 +85,12 @@ class FolderController(
         folderService.createFolder(parentUUID, title);
         return "fragments/ok"
     }
+
     // Folder Delete -> contentChanged
     @HxRequest
     @HxRefresh
     @DeleteMapping("/delete")
-    fun deleteFolder(folderUUID: UUID):String {
+    fun deleteFolder(folderUUID: UUID): String {
         folderService.deleteFolder(folderUUID)
         return "fragments/ok"
     }
@@ -104,29 +113,40 @@ class FolderController(
         return "fragments/ok"
     }
 
-
-
-
-
-
     // add Permission -> permissionChanged
+    @HxRequest
+    @HxRefresh
+    @PostMapping("/addpermission")
+    fun addPermission(folderUUID: UUID, username: String): String {
+        folderService.addPermission(folderUUID, username)
+        return "fragments/ok"
+    }
 
-    // change Permission -> permissionChanged
 
     // delete Permission -> permissionChanged
+    @HxRequest
+    @HxRefresh
+    @DeleteMapping("/deletepermission")
+    fun deletePermission(permissionUUID: UUID): String {
+        folderService.deletePermission(permissionUUID)
+        return "fragments/ok"
+    }
 
 //    @PostMapping("/addPermission")
 //    fun postNewPermissions(folderUUID: UUID, username: String, canWrite:Boolean):String {
 //
 //    }
 
-        @GetMapping("/shared-with-me")
-    fun pageSharedWithMe( model: Model): String {
-        val list =  folderService.getAllShredWithMe();
-
-        model.addAttribute("foldersToShow", list)
+    @GetMapping("/shared-with-me")
+    fun pageSharedWithMe(model: Model): String {
+        val list = folderService.getAllShredWithMe();
+        // files
+        model.addAttribute("isOwner",false)
         model.addAttribute("title", "Shared with me")
-        return "usersFolder"
+        model.addAttribute("foldersToShow", list)
+
+        return "pages/files/usersFolder"
+
     }
 
 }

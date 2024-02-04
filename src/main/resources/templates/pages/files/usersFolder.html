@@ -13,7 +13,7 @@
 </head>
 <body>
 <!--/*@thymesVar id="isOwner" type="java.lang.Boolean"*/-->
-<div layout:fragment="contente" class="grid " th:classappend="${isOwner}? 'lg:grid-cols-[1fr_280px]' : ' ' " >
+<div layout:fragment="contente" class="grid " th:classappend="${isOwner == true} ? 'lg:grid-cols-[1fr_280px]' : ' ' " >
 
 
     <main class="flex flex-col gap-4 p-4 md:gap-8 md:p-6">
@@ -25,10 +25,11 @@
         </div>
     </main>
 
-
-    <div th:if="${isOwner}" layout:replace="~{fragments/files/folder/control}">
-
+    <div th:if="${isOwner==true}">
+        <div  layout:replace="~{fragments/files/folder/control}">
+        </div>
     </div>
+
 
 
 </div>

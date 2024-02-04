@@ -1,7 +1,7 @@
 <div class="w-full max-w-7xl p-4" xmlns="http://www.w3.org/1999/html">
     <div class="flex flex-col gap-6">
         <form class="grid gap-4">
-            <input  type="hidden" name="folderUUID" th:value="${folderUUID}"/>
+            <input type="hidden" name="folderUUID" th:value="${folderUUID}"/>
             <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                     hx-post="/files/newfile"
                     type="submit">New File
@@ -22,7 +22,7 @@
                                 name="title"
                                 id="folderName" placeholder="Hello Folder">
                     </div>
-                    <input  type="hidden" name="parentUUID" th:value="${folderUUID}"/>
+                    <input type="hidden" name="parentUUID" th:value="${folderUUID}"/>
 
                     <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             hx-post="/files/new"
@@ -32,72 +32,42 @@
             </div>
         </div>
 
+
         <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div class="flex flex-col space-y-1.5 px-6 pt-6"><h3
-                    class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Manage Users</h3>
-                <p class="text-sm text-muted-foreground">View and manage all users.</p></div>
+            <div class="flex flex-col space-y-1.5 px-6 pt-6">
+                <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Manage Users</h3>
+                <p class="text-sm text-muted-foreground">Manage accses to this folder</p></div>
             <div class="p-6">
                 <div class="relative w-full overflow-auto">
                     <table class="w-full caption-bottom text-sm">
                         <thead class="[&amp;_tr]:border-b">
                         <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground ">
                                 Name
                             </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                Email
-                            </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                Permissions
-                            </th>
-                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                                Actions
+                            <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground ">
+
                             </th>
                         </tr>
                         </thead>
                         <tbody class="[&amp;_tr:last-child]:border-0">
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jane Doe</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jane.doe@example.com</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Read, Write</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                <div class="flex items-center gap-2">
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Edit
-                                    </button>
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Delete
-                                    </button>
-                                </div>
+
+                        <!--/*@thymesVar id="folderPermisions" type="java.util.List<me.jovica.notesapp.files.domain.FolderPermissionsEntity>"*/-->
+                        <tr th:each="per: ${folderPermisions}"
+                            class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                        >
+                            <td th:text="${per.userEntity.userAccount.getFullName()}" class="p-4 align-middle">
+                                Jane Doe
                             </td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">John Doe</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">john.doe@example.com</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Read</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
+                            <td class="p-4 align-middle ">
                                 <div class="flex items-center gap-2">
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Edit
-                                    </button>
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Delete
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Jane Smith</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">jane.smith@example.com</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">Write</td>
-                            <td class="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-                                <div class="flex items-center gap-2">
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Edit
-                                    </button>
-                                    <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                                        Delete
-                                    </button>
+                                    <form>
+                                        <input type="hidden" name="permissionUUID" th:value="${per.getId()}">
+                                        <button hx-delete="/files/deletepermission"
+                                                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                                            Remove
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -105,49 +75,25 @@
                     </table>
                 </div>
             </div>
-        </div>
-        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-            <div class="flex flex-col space-y-1.5 px-6 pt-6"><h3
-                    class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Add New User</h3>
-                <p class="text-sm text-muted-foreground">Manage user permissions.</p></div>
+            <div class="flex flex-col space-y-1.5 px-6 pt-6">
+                <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">Add user </h3>
+                <p class="text-sm text-muted-foreground">Give accses to this folder</p></div>
             <div class="p-6">
                 <form class="grid gap-4">
-                    <div class="grid gap-2"><label
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            for="name">Name</label><input
-                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="name" placeholder="Enter user name"></div>
-                    <div class="grid gap-2"><label
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            for="email">Email</label><input
-                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="email" placeholder="Enter user email" type="email"></div>
-                    <div class="grid gap-2"><label
-                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            for="permissions">Permissions</label>
-                        <div class="flex items-center gap-4"><label
-                                class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 font-normal">
-                            <button type="button" role="checkbox" aria-checked="false" data-state="unchecked" value="on"
-                                    class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                    id="read"></button>
-                            <input aria-hidden="true" tabindex="-1" type="checkbox" value="on"
-                                   style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px;">
-                            Read
-                        </label><label
-                                class="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 font-normal">
-                            <button type="button" role="checkbox" aria-checked="false" data-state="unchecked" value="on"
-                                    class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                                    id="write"></button>
-                            <input aria-hidden="true" tabindex="-1" type="checkbox" value="on"
-                                   style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px;">
-                            Write
-                        </label></div>
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                               for="username">Username</label>
+                        <input class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                               name="username" id="username" placeholder="Enter user name">
                     </div>
+                    <input type="hidden" name="folderUUID" th:value="${folderUUID}"/>
                     <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                            hx-post="/files/addpermission"
                             type="submit">Add User
                     </button>
                 </form>
             </div>
+
         </div>
     </div>
 </div>

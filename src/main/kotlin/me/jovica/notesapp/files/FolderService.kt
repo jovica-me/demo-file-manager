@@ -13,21 +13,35 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class FolderService(private val folderEntityRepository: FolderEntityRepository,
-                    private val folderPermissionsEntityRepository: FolderPermissionsEntityRepository, private val userEntityRepository: UserEntityRepository
+class FolderService(
+    private val folderEntityRepository: FolderEntityRepository,
+    private val folderPermissionsEntityRepository: FolderPermissionsEntityRepository,
+    private val userEntityRepository: UserEntityRepository
 ) {
-    fun hasAccsesToFolder(folder: FolderEntity): Pair<Boolean,Boolean>  {
+    private fun checkForPermission(folderUUID: UUID): Pair<FolderEntity, WebAuthnAuthentication> {
+        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
+        val folder =
+            folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
+        if (folder.owner?.userAccount?.username != auth.username) {
+            throw IllegalStateException("User can not change promotions if he is not the owner")
+        }
+        return Pair(folder, auth)
+    }
+
+    fun hasAccsesToFolder(folderUUID: UUID): Triple<FolderEntity, Boolean, Boolean> {
+        val folder = folderEntityRepository.findById(folderUUID)
+            .orElseThrow { throw IllegalStateException("File dose not exist") }
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
 
-        if(folder.owner?.userAccount?.username == auth.username) {
-            return Pair(true,true)
+        if (folder.owner?.userAccount?.username == auth.username) {
+            return Triple(folder, true, true)
         }
-        val x = folderPermissionsEntityRepository.findByFolderEntity_IdAndReadTrueAndUserEntity_Id(folder.id!!, auth.id)
-        if(x.isPresent) {
-            return Pair(true,false)
+        val x = folderPermissionsEntityRepository.findByFolderEntity_IdAndUserEntity_Id(folder.id!!, auth.id)
+        if (x.isPresent) {
+            return Triple(folder, true, false)
         }
 
-        return Pair(false,false)
+        return Triple(folder, false, false)
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -37,8 +51,8 @@ class FolderService(private val folderEntityRepository: FolderEntityRepository,
         val folder = folderEntityRepository.findById(parentUUID)
             .orElseThrow { throw IllegalStateException("File dose not exist") }
 
-        if( folder.owner?.userAccount?.username != auth.username) {
-            return ;
+        if (folder.owner?.userAccount?.username != auth.username) {
+            return;
         }
 
         val newFolder = FolderEntity()
@@ -51,31 +65,16 @@ class FolderService(private val folderEntityRepository: FolderEntityRepository,
         folderEntityRepository.save(newFolder)
         folderEntityRepository.save(folder)
     }
+
     fun getAllShredWithMe(): List<FolderEntity> {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        return folderEntityRepository.findByFolderPermissionsEntities_UserEntity_IdAndFolderPermissionsEntities_ReadTrue(auth.id)
+        return folderEntityRepository.findByFolderPermissionsEntities_UserEntity_Id(auth.id)
     }
 
-    fun shareFolderWithUser(folderUUID:UUID,username:String, write:Boolean = false) {
-        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        val folder = folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
-        val userToShare = userEntityRepository.findByUserAccount_Username(username).orElseThrow { throw IllegalArgumentException("Invalid username") }
-        if(folder.owner?.userAccount?.username != auth.username) {
-            throw  IllegalStateException("User can not change promotions if he is not the owner")
-        }
-
-        val permission = FolderPermissionsEntity();
-        permission.folderEntity = folder
-        permission.userEntity = userToShare
-        folderPermissionsEntityRepository.save(permission)
-    }
 
     fun deleteFolder(folderUUID: UUID) {
-        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        val folder = folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
-        if(folder.owner?.userAccount?.username != auth.username) {
-            throw  IllegalStateException("User can not change promotions if he is not the owner")
-        }
+        val (folder, auth) = checkForPermission(folderUUID)
+
 
 //        val parent = folder.parentFolder?: throw IllegalArgumentException("Invalid folder")
 //        parent.childrenFolders.remove(folder);
@@ -85,5 +84,46 @@ class FolderService(private val folderEntityRepository: FolderEntityRepository,
         folderEntityRepository.delete(folder);
 
     }
+
+    fun addPermission(folderUUID: UUID, username: String) {
+        val (folder, auth) = checkForPermission(folderUUID)
+        val userToShare = userEntityRepository.findByUserAccount_Username(username)
+            .orElseThrow { throw IllegalArgumentException("Invalid username") }
+        if (auth.id == userToShare.id) {
+            throw IllegalStateException("Can not be both owner and edited user")
+        }
+        val userAlreadyHasPermission = userToShare.folderPermissionsEntities.find {
+            it.userEntity?.id == userToShare.id
+        }
+        if (userAlreadyHasPermission != null) {
+            throw IllegalStateException("User has permission")
+        }
+        val permission = FolderPermissionsEntity();
+        permission.folderEntity = folder
+        permission.userEntity = userToShare
+        folderPermissionsEntityRepository.save(permission)
+    }
+
+
+    fun deletePermission(permissionUUID: UUID) {
+        val permission = folderPermissionsEntityRepository.findById(permissionUUID)
+            .orElseThrow { throw IllegalArgumentException("Invalid Permission request") }
+        val (folder, auth) = checkForPermission(permission.folderEntity?.id!!)
+
+        folderPermissionsEntityRepository.delete(permission)
+    }
+
+//    fun star(folderUUID: UUID) {
+//        val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
+//        val folder =
+//            folderEntityRepository.findById(folderUUID).orElseThrow { throw IllegalArgumentException("Invalid folder") }
+//        val user = userEntityRepository.findById(auth.id).orElseThrow {
+//            throw IllegalStateException("A BUG")
+//        }
+//
+//        folder.staredUsers.add(user)
+//        folderEntityRepository.save(folder)
+//
+//    }
 }
 

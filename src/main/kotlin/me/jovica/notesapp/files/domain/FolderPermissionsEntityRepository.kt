@@ -12,7 +12,7 @@ interface FolderPermissionsEntityRepository : JpaRepository<FolderPermissionsEnt
 
     @Query(
         """select f from FolderPermissionsEntity f
-where f.folderEntity.id = ?1 and f.read = true and f.userEntity.id = ?2"""
+where f.folderEntity.id = ?1 and f.userEntity.id = ?2"""
     )
-    fun findByFolderEntity_IdAndReadTrueAndUserEntity_Id(id: UUID, id1: UUID): Optional<FolderPermissionsEntity>
+    fun findByFolderEntity_IdAndUserEntity_Id(id: UUID, id1: UUID): Optional<FolderPermissionsEntity>
 }

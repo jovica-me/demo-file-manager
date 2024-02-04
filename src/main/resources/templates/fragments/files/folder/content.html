@@ -1,19 +1,50 @@
 <!--/*@thymesVar id="foldersToShow" type="java.util.List<me.jovica.notesapp.domain.files.FolderEntity>"*/-->
-<div th:each="folder: ${foldersToShow}" >
+<div th:each="folder: ${foldersToShow}">
     <a th:href="|/files/${folder.getId()}|">
         <span th:text="${folder.getName()}"></span>
         <img src="/folder.svg" alt="Cover image" width="200"
              height="200"
              class="aspect-square rounded-md object-cover">
     </a>
-    <form>
-        <input type="hidden"  name="folderUUID" th:value="${folder.getId()}">
+    <form th:if="${isOwner}">
+        <input type="hidden" name="folderUUID" th:value="${folder.getId()}">
         <!--/*@thymesVar id="isOwner" type="java.lang.Boolean"*/-->
-        <button th:if="${isOwner}"
-                th:hx-delete="|/files/delete|"
-                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-            Delete
+        <button
+                hx-post="/files/star"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-4 w-4"
+            >
+                <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
         </button>
+        <button
+                hx-delete="/files/delete"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-4 w-4"
+            >
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+        </button>
+
     </form>
 
 </div>
@@ -27,7 +58,7 @@
     </a>
 
     <form>
-        <input type="hidden"  name="fileUUID" th:value="${file.getId()}">
+        <input type="hidden" name="fileUUID" th:value="${file.getId()}">
         <!--/*@thymesVar id="isOwner" type="java.lang.Boolean"*/-->
         <button th:if="${isOwner}"
                 th:hx-delete="|/files/deletefile|"

@@ -36,8 +36,7 @@ open class FolderEntity {
     @JoinColumn(name = "top_folder_of_user_id", unique = true)
     open var topFolderOfUser: UserEntity? = null
 
-    @OneToMany(mappedBy = "folderEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "folderEntity", cascade = [CascadeType.ALL])
     open var folderPermissionsEntities: MutableSet<FolderPermissionsEntity> = mutableSetOf()
-
 
 }

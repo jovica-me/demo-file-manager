@@ -1,6 +1,7 @@
 package me.jovica.notesapp.domain.files;
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import java.util.*
 
 interface FolderEntityRepository : JpaRepository<FolderEntity, UUID> {
@@ -11,4 +12,11 @@ interface FolderEntityRepository : JpaRepository<FolderEntity, UUID> {
 
 
     override fun deleteById(id: UUID)
+
+
+    @Query(
+        """select f from FolderEntity f inner join f.folderPermissionsEntities folderPermissionsEntities
+where folderPermissionsEntities.userEntity.id = ?1"""
+    )
+    fun findByFolderPermissionsEntities_UserEntity_Id(id: UUID): List<FolderEntity>
 }

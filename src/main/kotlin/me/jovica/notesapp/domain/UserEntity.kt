@@ -37,4 +37,6 @@ open class UserEntity {
 
     @OneToMany(mappedBy = "userEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
     open var folderPermissionsEntities: MutableSet<FolderPermissionsEntity> = mutableSetOf()
+
+
 }

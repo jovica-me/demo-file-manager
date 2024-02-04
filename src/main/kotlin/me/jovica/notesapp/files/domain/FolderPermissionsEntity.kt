@@ -28,7 +28,6 @@ open class FolderPermissionsEntity {
     open var userEntity: UserEntity? = null
 
     @ManyToOne(cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "folder_entity_id", nullable = false)
     open var folderEntity: FolderEntity? = null
 }
 
