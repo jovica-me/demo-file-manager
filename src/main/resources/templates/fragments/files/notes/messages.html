@@ -1,0 +1,24 @@
+<div
+        id="msg"
+        class="py-6 grid gap-4 "
+        th:hx-get="|/files/file/message/${fileUUID}|"
+        hx-trigger="every 600ms"
+        hx-target="this"
+        hx-swap="outerHTML">
+    <div th:each="msg: ${messages}" class="grid gap-1 px-6">
+        <div class="text-sm font-medium" th:text="${msg.userEntity.userAccount.fullName}"></div>
+        <div class="text-sm text-gray-500 dark:text-gray-400" th:text="${msg.text}">
+            Hey, how's the document coming along?
+        </div>
+    </div>
+    <!--            <div class="flex items-start space-x-2"><span-->
+    <!--                    class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"><span-->
+    <!--                    class="flex h-full w-full items-center justify-center rounded-full bg-muted">JP</span></span>-->
+    <!--                <div class="flex flex-col space-y-1">-->
+    <!--                    <div class="text-sm font-medium">Jared Palmer</div>-->
+    <!--                    <div class="text-sm text-gray-500 dark:text-gray-400">-->
+    <!--                        Let me know if you need any help.-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+</div>

@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title th:text="${noteName}"></title>
+    <title th:text="${file.name}"></title>
 
     <link
             rel="stylesheet"
@@ -16,18 +16,70 @@
 
 </head>
 <body>
-<main>
-    <section layout:fragment="content" class="grid bg-gray-100 min-h-dvh pt-[45px]"  th:classappend="${isOwner == true} ? 'lg:grid-cols-[1fr_280px]' : ' ' " >
-        <div>
-            <form method="POST">
-                <input type="text" name="noteName" th:value="${file.name}">
-                <textarea id="main-editor" ></textarea>
-                <input type="hidden" id="noteText" name="noteText" >
+<div>
+
+
+    <div layout:fragment="content" class="grid pt-[45px]"
+         th:classappend="${isOwner == true} ? 'lg:grid-cols-[1fr_3fr_1fr]' : 'lg:grid-cols-[1fr_3fr]' ">
+        <div class="w-full max-w-7xl p-4">
+            <aside class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <div class="px-6 pt-6">
+                    <h2 class="text-lg font-semibold">Chat Discussion</h2>
+                    <form class="text-sm text-muted-foreground">
+                    <textarea
+                            name="message"
+                            class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Type your message here..."></textarea>
+                        <button
+                                hx-target="#msg"
+                                hx-swap="outerHTML"
+                                th:hx-post="|/files/file/message/${fileUUID}|"
+
+                                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-md px-3 mt-2">
+                            Send
+                        </button>
+                    </form>
+                </div>
+                <div layout:replace="~{fragments/files/notes/messages}">
+
+                </div>
+            </aside>
+        </div>
+
+        <main class="flex flex-col p-4">
+            <form class="flex flex-col">
+                <header class="flex items-center justify-between   dark:border-gray-800">
+                    <a th:href="|/files/${file.folderEntity.getId()}|"
+                       class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                        Go Back
+                    </a>
+                    <div class="flex gap-4 items-center justify-center">
+                        <button
+                                hx-post="/files/file/autosave"
+                                hx-target="this"
+                                hx-swap="outerHTML">
+                            Enable auto save
+                        </button>
+
+                        <button
+                                hx-post="/files/file/save"
+                                hx-swap="outerHTML"
+                                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                            Save
+                        </button>
+                        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                            Publish
+                        </button>
+                    </div>
+                </header>
+                <input class=" my-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                       type="text" name="noteName" th:value="${file.name}"/>
+                <textarea id="main-editor"></textarea>
+                <input type="hidden" id="noteText" name="noteText">
                 <!--/*@thymesVar id="noteUUID" type="java.lang.String"*/-->
-                <input type="hidden" name="noteUUID" th:value="${file.id}" >
+                <input type="hidden" name="noteUUID" th:value="${file.id}">
                 <!--/*@thymesVar id="noteFolderUUID" type="java.lang.String"*/-->
-                <input type="hidden" name="folderUUID" th:value="${file.folderEntity.id}" >
-                <button hx-post="" hx-swap="outerHTML" >Save</button>
+                <input type="hidden" name="folderUUID" th:value="${file.folderEntity.id}">
             </form>
             <script th:inline="javascript">
                 /*<![CDATA[*/
@@ -37,23 +89,61 @@
                 });
                 const textEl = document.getElementById("noteText");
                 textEl.value = easymde.value();
-                easymde.codemirror.on("change", ()=> {
+                easymde.codemirror.on("change", () => {
                         textEl.value = easymde.value()
                     }
                 )
                 /*]]>*/
             </script>
-        </div>
-        <div th:if="${isOwner==true}">
+        </main>
+        <aside th:if="${isOwner==true}">
             <div layout:replace="~{fragments/files/notes/control}">
 
             </div>
+        </aside>
+    </div>
 
-        </div>
+
+    <!--    <section layout:fragment="content" class="grid bg-gray-100 min-h-dvh pt-[45px]"-->
+    <!--             th:classappend="${isOwner == true} ? 'lg:grid-cols-[1fr_3fr_1fr]' : 'lg:grid-cols-[1fr_3fr]' ">-->
+    <!--        <div>-->
+    <!--            CHAT-->
+    <!--        </div>-->
+    <!--        <main>-->
+    <!--            <form method="POST">-->
+    <!--                <input type="text" name="noteName" th:value="${file.name}">-->
+    <!--                <textarea id="main-editor"></textarea>-->
+    <!--                <input type="hidden" id="noteText" name="noteText">-->
+    <!--                &lt;!&ndash;/*@thymesVar id="noteUUID" type="java.lang.String"*/&ndash;&gt;-->
+    <!--                <input type="hidden" name="noteUUID" th:value="${file.id}">-->
+    <!--                &lt;!&ndash;/*@thymesVar id="noteFolderUUID" type="java.lang.String"*/&ndash;&gt;-->
+    <!--                <input type="hidden" name="folderUUID" th:value="${file.folderEntity.id}">-->
+    <!--                <button hx-post="" hx-swap="outerHTML">Save</button>-->
+    <!--            </form>-->
+    <!--            <script th:inline="javascript">-->
+    <!--                /*<![CDATA[*/-->
+    <!--                const easymde = new EasyMDE({-->
+    <!--                    initialValue: /*[[${file.text}]]*/ "# Hello",-->
+    <!--                    element: document.getElementById('main-editor'),-->
+    <!--                });-->
+    <!--                const textEl = document.getElementById("noteText");-->
+    <!--                textEl.value = easymde.value();-->
+    <!--                easymde.codemirror.on("change", () => {-->
+    <!--                        textEl.value = easymde.value()-->
+    <!--                    }-->
+    <!--                )-->
+    <!--                /*]]>*/-->
+    <!--            </script>-->
+    <!--        </main>-->
+    <!--        <div th:if="${isOwner==true}">-->
+    <!--            <div layout:replace="~{fragments/files/notes/control}">-->
+
+    <!--            </div>-->
+
+    <!--        </div>-->
 
 
-
-    </section>
-</main>
+    <!--    </section>-->
+</div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package me.jovica.notesapp.files
 
 import me.jovica.notesapp.domain.UserEntityRepository
+import me.jovica.notesapp.domain.files.FileEntity
 import me.jovica.notesapp.domain.files.FileEntityRepository
 import me.jovica.notesapp.domain.files.FolderEntity
 import me.jovica.notesapp.domain.files.FolderEntityRepository
@@ -67,9 +68,11 @@ class FolderService(
         folderEntityRepository.save(folder)
     }
 
-    fun getAllShredWithMe(): List<FolderEntity> {
+    fun getAllShredWithMe(): Pair<List<FolderEntity>,List<FileEntity>> {
         val auth = SecurityContextHolder.getContext().authentication as WebAuthnAuthentication
-        return folderEntityRepository.findByFolderPermissionsEntities_UserEntity_Id(auth.id)
+        val list = folderEntityRepository.findByFolderPermissionsEntities_UserEntity_Id(auth.id)
+        val listfile = fileEntityRepository.findByHasAccess_Id(auth.id)
+        return  Pair(list,listfile)
     }
 
 

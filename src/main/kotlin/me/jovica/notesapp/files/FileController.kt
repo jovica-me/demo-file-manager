@@ -14,10 +14,11 @@ class FileController(
 ) {
     @GetMapping("/{id}")
     fun pageFile(@PathVariable("id") noteUUID: UUID, model: Model): String {
-        val file = fileService.getFile(noteUUID);
-        file.text
+        val data = fileService.getFile(noteUUID) ?: return "redirect:/";
+        val (file,isOwner) = data;
         model.addAttribute("file",file)
-        model.addAttribute("isOwner",true)
+        model.addAttribute("isOwner",isOwner)
+        model.addAttribute("fileUUID",file.id)
         return "pages/files/note"
     }
 
@@ -28,13 +29,23 @@ class FileController(
     }
 
     @HxRequest
-    @PostMapping("/{id}")
-    fun saveFile(@PathVariable("id") noteUUID: UUID, noteText: String, noteName: String): String {
+    @PostMapping("/save")
+    fun saveFile( noteUUID: UUID, noteText: String, noteName: String): String {
         val x = fileService.updateTextAndTitle(noteUUID, noteText,noteName)
         if (x == 0) {
             return "fragments/files/notes/failedtosave"
         }
         return "fragments/files/notes/saved"
+    }
+
+    @HxRequest
+    @PostMapping("/autosave")
+    fun autosave( noteUUID: UUID, noteText: String, noteName: String): String {
+        val x = fileService.updateTextAndTitle(noteUUID, noteText,noteName)
+        if (x == 0) {
+            return "fragments/files/notes/failedtoautosave"
+        }
+        return "fragments/files/notes/autosave"
     }
 
     @HxRequest
@@ -55,20 +66,27 @@ class FileController(
         return "fragments/files/notes/control"
     }
 
+    @HxRequest
+    @PostMapping("/message/{fileUUID}")
+    fun postMessage(@PathVariable fileUUID: UUID,message:String,model: Model): String {
+        val messages = fileService.sendMessage(fileUUID,message);
+        model.addAttribute("messages",messages)
+        model.addAttribute("fileUUID",fileUUID)
 
-    fun move() {
-        TODO("Not yet implemented")
-
-        // is he the owner
-        // is he the owner of the destination
-
+        return "fragments/files/notes/messages"
     }
 
-    fun delete() {
-        TODO("Not yet implemented")
+    @HxRequest
+    @GetMapping("/message/{fileUUID}")
+    fun getMessages(@PathVariable fileUUID: UUID,model: Model): String {
+        val messages = fileService.getMessages(fileUUID);
+        model.addAttribute("messages",messages)
+        model.addAttribute("fileUUID",fileUUID)
 
-
+        return "fragments/files/notes/messages"
     }
+
+
 
 
 

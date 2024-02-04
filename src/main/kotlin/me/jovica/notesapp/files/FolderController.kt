@@ -139,11 +139,12 @@ class FolderController(
 
     @GetMapping("/shared-with-me")
     fun pageSharedWithMe(model: Model): String {
-        val list = folderService.getAllShredWithMe();
+        val (list,fileList) = folderService.getAllShredWithMe();
         // files
         model.addAttribute("isOwner",false)
         model.addAttribute("title", "Shared with me")
         model.addAttribute("foldersToShow", list)
+        model.addAttribute("filesToShow", fileList)
 
         return "pages/files/usersFolder"
 

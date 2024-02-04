@@ -34,7 +34,7 @@
 
 </div>
 <!--/*@thymesVar id="filesToShow" type="java.util.List<me.jovica.notesapp.domain.files.FileEntity>"*/-->
-<div th:each="file: ${filesToShow}" th:hx-vals="'{\'fileUUID\': \'' +${file.getId()}+ '\'}' ">
+<div th:each="file: ${filesToShow}" th:hx-vals="'{\'fileUUID\': \'' +${file.getId()}+ '\'}'">
     <a th:href="|/files/file/${file.getId()}|">
         <span th:text="${file.getName()}"></span>
         <img src="/file.svg" alt="Cover image" width="200"

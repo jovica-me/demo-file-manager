@@ -13,4 +13,7 @@ interface FileEntityRepository : JpaRepository<FileEntity, UUID> {
     @Modifying
     @Query("update FileEntity f set f.name = ?1, f.text = ?2 where f.id = ?3")
     fun updateNameAndTextById(name: String, text: String, id: UUID): Int
+
+
+    fun findByHasAccess_Id(id: UUID): List<FileEntity>
 }

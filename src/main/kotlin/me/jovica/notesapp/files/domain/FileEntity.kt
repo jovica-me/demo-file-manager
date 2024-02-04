@@ -2,6 +2,7 @@ package me.jovica.notesapp.domain.files
 
 import jakarta.persistence.*
 import me.jovica.notesapp.domain.UserEntity
+import me.jovica.notesapp.files.domain.FileMessageEntity
 import org.hibernate.proxy.HibernateProxy
 import java.util.*
 
@@ -31,6 +32,8 @@ open class FileEntity {
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "accessFiles", cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH])
     open var hasAccess: MutableSet<UserEntity> = mutableSetOf()
 
+    @OneToMany(mappedBy = "fileEntity", cascade = [CascadeType.ALL], orphanRemoval = true)
+    open var messages: MutableList<FileMessageEntity> = mutableListOf()
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
